@@ -1,8 +1,7 @@
-
 import { db } from "../../../lib/database"
 import CodedError from "../../../lib/CodedError"
 import LoginModel from "./model"
-import Router from "@/lib/router"
+import Router from "../../../lib/router"
 
 const loginRouter = new Router()
 
@@ -15,7 +14,7 @@ loginRouter.post("/", {}, async (req, res) => {
     if (!location) throw new CodedError("User not found", 404, "AUTH|01")
     console.log(typeof location.password, typeof password)
     if (location.password !== password) throw new CodedError("Incorrect password", 401, "AUTH|02")
-      
+
     await res.addSession(location)
     res.success("Login successful...")
   } catch (error) {

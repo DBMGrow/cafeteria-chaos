@@ -1,12 +1,11 @@
 import express, { NextFunction } from "express"
-import CodedError from "@/lib/CodedError"
+import CodedError from "../lib/CodedError"
 import { CookieOptions, Req, Res, Session, PagesResponse, LogConfig, LogMessage } from "../lib/types"
 // import { CookieOptions, Request, Response } from "express"
-import { db } from "@/lib/database"
+import { db } from "../lib/database"
 import z, { ZodError } from "zod"
 import { Selectable } from "kysely"
 import { DB } from "./db"
-
 
 type Method = "get" | "post" | "put" | "patch" | "delete"
 export type Handler = (req: Req, res: Res, next: NextFunction) => Promise<void>
@@ -27,28 +26,22 @@ export class RequestMethods {
     const _api_key = this.req.cookies._api_key || this.req.headers["_api_key"]
     if (!_api_key) throw new CodedError("Unauthorized", 401, "REQ|01")
 
-      const location = await db
-      .selectFrom("Locations")
-      .where("api_key", "=", _api_key)
-      .selectAll()
-      .executeTakeFirst()
-   
+    const location = await db.selectFrom("Locations").where("api_key", "=", _api_key).selectAll().executeTakeFirst()
+
     if (!location) throw new CodedError("Invalid API token", 401, "REQ|01")
 
     return location
   }
 
-
-
   /**
    * Used to set the current session to the system. Used by webhooks and other system level requests.
    */
-//   async setSystemSession() {
-//     const user = await db.selectFrom("Users").where("Users.user_id", "=", 3).selectAll().executeTakeFirst()
-//     if (!user) throw new CodedError("System user not found", 500, "REQ|02")
+  //   async setSystemSession() {
+  //     const user = await db.selectFrom("Users").where("Users.user_id", "=", 3).selectAll().executeTakeFirst()
+  //     if (!user) throw new CodedError("System user not found", 500, "REQ|02")
 
-//     this.req.user = user
-//   }
+  //     this.req.user = user
+  //   }
 }
 
 export class ResponseMethods {
@@ -139,7 +132,6 @@ export class ResponseMethods {
     this.res.cookie("_locationType", cookieOptions)
     this.res.cookie("_locationID", cookieOptions)
   }
-
 }
 
 class Router {

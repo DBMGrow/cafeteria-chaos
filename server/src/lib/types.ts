@@ -1,16 +1,14 @@
-import { Selectable } from 'kysely';
+import { Selectable } from "kysely"
 import { Request, Response, CookieOptions as CO, NextFunction as NF } from "express"
 import { z } from "zod"
-import { db } from "@/lib/database"
 import { Express } from "express"
-import { DB } from "@/lib/db"
+import { DB } from "../lib/db"
 
 export interface LogConfig {
   table_id?: number
   tablename?: keyof DB
   level?: string
 }
-
 
 export type LogMessage = string | object | null | undefined
 
@@ -30,7 +28,6 @@ export interface Req extends Request {
   caps?: string[]
   digest_id: string
   getSession: () => Promise<Session>
-
 }
 export type PromiseType<T extends Promise<any>> = T extends Promise<infer U> ? U : never
 
@@ -51,4 +48,3 @@ export interface CookieOptions extends CO {}
 export interface NextFunction extends NF {}
 
 export interface Session extends Selectable<DB["Locations"]> {}
-
