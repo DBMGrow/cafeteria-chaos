@@ -8,7 +8,11 @@ const loginRouter = new Router()
 loginRouter.post("/", {}, async (req, res) => {
   try {
     const loginMethods = new LoginModel(req, res)
-    const { name, password } = req.body
+
+    console.log(req.body)
+
+    const { name, password } = req.body ?? {}
+
     const location = await db.selectFrom("Locations").where("name", "=", name).selectAll().executeTakeFirst()
 
     if (!location) throw new CodedError("User not found", 404, "AUTH|01")
