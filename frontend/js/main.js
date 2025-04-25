@@ -59,7 +59,7 @@ function preload() {
 
 async function fetchLeaderboard() {
   try {
-    const response = await fetch(`http://localhost:3000/highscores`)
+    const response = await fetch(`/highscores`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -73,7 +73,7 @@ async function fetchLeaderboard() {
 
 async function fetchLocationsSession() {
   try {
-    const response = await fetch(`http://localhost:3000/locations/session`)
+    const response = await fetch(`/locations/session`)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
@@ -86,7 +86,7 @@ async function fetchLocationsSession() {
 
 async function useAddNewHighScores({ email, score }) {
   try {
-    const response = await fetch(`http://localhost:3000/highscores`, {
+    const response = await fetch(`/highscores`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, score }),
@@ -243,9 +243,9 @@ function gameOver() {
   // button.position(450, 350);
   // button.mousePressed(resetSketch);
   // Add "Play Again" button
-  
+
   const topScore = leaderboardData[9]?.score
-  
+
   if (score > topScore) {
     addNewHighScores()
   } else {
@@ -397,7 +397,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
   try {
     // console.log(process.env.BASE_URL)
-    const response = await fetch(`http://localhost:3000/auth/login`, {
+    const response = await fetch(`/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, password }),
@@ -434,7 +434,7 @@ document.getElementById("highScoresForm").addEventListener("submit", async funct
       return
     }
 
-    const response = await fetch(`http://localhost:3000/highscores`, {
+    const response = await fetch(`/highscores`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, score }),
@@ -476,12 +476,12 @@ function showLeaderboardScores() {
 
 // Move populateLeaderboard outside the event listener
 function populateLeaderboard() {
-  const leaderboardRows = document.getElementById("leaderboard-rows");
-  leaderboardRows.innerHTML = ""; // Clear existing rows
-  console.log("populateLeaderboard: ", leaderboardData);
+  const leaderboardRows = document.getElementById("leaderboard-rows")
+  leaderboardRows.innerHTML = "" // Clear existing rows
+  console.log("populateLeaderboard: ", leaderboardData)
 
   leaderboardData.forEach((player, index) => {
-    const opacity = Math.max(0.3, 1 - (index + 1 - 3) * 0.08);
+    const opacity = Math.max(0.3, 1 - (index + 1 - 3) * 0.08)
     const backgroundColor =
       index === 0
         ? `bg-gradient-to-r from-yellow-200 to-yellow-400`
@@ -489,7 +489,7 @@ function populateLeaderboard() {
         ? `bg-gradient-to-r from-blue-200 to-blue-400`
         : index === 2
         ? `bg-gradient-to-r from-red-200 to-red-400`
-        : `bg-gradient-to-r from-orange-200 to-orange-400`;
+        : `bg-gradient-to-r from-orange-200 to-orange-400`
 
     const rowContent = `
       <div class="leaderboard-row flex items-center gap-4 rounded-xl p-2 border-b border-orange-500 ${backgroundColor} opacity-${opacity}">
@@ -500,16 +500,16 @@ function populateLeaderboard() {
           <span class="text-white">${player.score}</span>
           </div>
       </div>
-    `;
-    leaderboardRows.innerHTML += rowContent;
-  });
+    `
+    leaderboardRows.innerHTML += rowContent
+  })
 }
 
 // Keep the DOMContentLoaded event listener for initial population
 document.addEventListener("DOMContentLoaded", async function () {
-  await fetchLeaderboard();
-  populateLeaderboard(); // Populate leaderboard on page load
-});
+  await fetchLeaderboard()
+  populateLeaderboard() // Populate leaderboard on page load
+})
 
 // timer = createP("timer");
 // setInterval(timeIt, 1000);
