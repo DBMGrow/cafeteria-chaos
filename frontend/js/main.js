@@ -463,10 +463,10 @@ playGameContainer.addEventListener("click", function (event) {
 })
 
 //open modal to resret leaderboard button
-document.getElementById("reset_leaderboard").addEventListener("click", function (event) {
-  const confirmResetModal = document.getElementById("confirm_reset")
-  confirmResetModal.style.display = "block"
-})
+// document.getElementById("reset_leaderboard").addEventListener("click", function (event) {
+//   const confirmResetModal = document.getElementById("confirm_reset")
+//   confirmResetModal.style.display = "block"
+// })
 
 //modal to resret leaderboard
 document.getElementById("resetLeaderboardForm").addEventListener("submit", async function (event) {
@@ -586,6 +586,7 @@ function populateLeaderboard() {
 // Keep the DOMContentLoaded event listener for initial population
 document.addEventListener("DOMContentLoaded", async function () {
   await fetchLeaderboard()
+  console.log("first time")
   populateLeaderboard() // Populate leaderboard on page load
 })
 

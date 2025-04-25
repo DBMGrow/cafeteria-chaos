@@ -5,8 +5,8 @@ const highscoresRouter = new Router()
 
 highscoresRouter.get("/", {}, async (req, res) => {
   try {
-    await req.getSession()
-    const highscoresList = await db.selectFrom("Highscores").orderBy("Highscores.score", "desc").selectAll().limit(10).execute()
+   const session = await req.getSession()
+    const highscoresList = await db.selectFrom("Highscores").where("Highscores.location_id", "=", session.location_id).orderBy("Highscores.score", "desc").selectAll().limit(10).execute()
     res.json(highscoresList)
   } catch (error) {
     console.error(error)
