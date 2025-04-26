@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react"
 import p5 from "p5"
+// import "p5/lib/addons/p5.sound"; // Import the p5.sound library
 
 interface P5WrapperProps {
   sketch: (p: p5) => void

@@ -3,33 +3,19 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import P5Wrapper from './components/P5Wrapper'
-import p5 from 'p5'
+// import fruitNinjaMini from './components/fruitNinjaMini'
+import PreloadSmoke from './components/fruitNinjaMini'
+// import FruitNinjaLite from './components/fruitninjaCanvas'
 
 
 function App() {
   const [count, setCount] = useState(0)
 
-  const exampleSketch = (p: p5) => {
-    let x = 50;
-    let y = 50;
-  
-    p.setup = () => {
-      p.createCanvas(400, 400);
-    };
-  
-    p.draw = () => {
-      p.background(200);
-      p.fill(255, 0, 0);
-      p.ellipse(x, y, 50, 50);
-  
-      x += p.random(-5, 5);
-      y += p.random(-5, 5);
-    };
-  };
 
   return (
     <>
-    <P5Wrapper sketch={exampleSketch} />
+      {/* <FruitNinjaLite /> */}
+    <P5Wrapper sketch={PreloadSmoke} />
       <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
