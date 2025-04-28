@@ -1,8 +1,13 @@
 #root {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #f0f0f0;
 }
 
 .logo {
@@ -39,4 +44,49 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.fruit-ninja-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+header {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(to right, #e74c3c, #f39c12);
+  color: white;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+main {
+  width: 100%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+footer {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #34495e;
+  color: white;
+  font-size: 0.85rem;
+}
+
+footer p {
+  margin: 0;
 }

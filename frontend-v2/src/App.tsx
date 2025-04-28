@@ -1,5 +1,5 @@
 import './App.css'
-// import FruitNinja from './components/FruitNinja'
+import FruitNinja from './components/FruitNinja'
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
         <h1>Fruit Ninja - React Edition</h1>
       </header>
       <main>
-        {/* <FruitNinja /> */}
+        <FruitNinja />
       </main>
       <footer>
         <p>Built with React, Vite, and p5.js</p>

@@ -1,436 +1,413 @@
-import { useEffect, useState } from 'react';
-import { ReactP5Wrapper } from "@p5-wrapper/react";
-import p5 from "p5";
+import { useEffect, useRef, useState } from 'react';
+import './FruitNinja.css';
+import p5 from 'p5';
 
-// Define types for our game objects
-type Fruit = {
-  x: number;
-  y: number;
-  xSpeed: number;
-  ySpeed: number;
-  size: number;
-  color: p5.Color;
-  type: string;
-  sliced: boolean;
-  visible: boolean;
-};
+// Game settings interface
+interface GameSettings {
+  timeLimit: number;
+  fruitSpawnRate: number;
+  bombFrequency: number;
+}
 
-type Sword = {
-  swipes: { x: number; y: number }[];
-  update: () => void;
-  draw: (p: p5) => void;
-  swipe: (x: number, y: number) => void;
-  checkSlice: (fruit: Fruit) => boolean;
-};
-
-// Main sketch function
-const sketch = (p: p5) => {
-  // Game state
-  let fruits: Fruit[] = [];
-  let sword: Sword;
-  let score = 0;
-  let lives = 3;
-  let isPlaying = false;
-  let gameOver = false;
-  let fruitsSlicedPerPress = 0;
-  let timerValue = 60;
-  let lastTimerUpdate = 0;
+const FruitNinja = () => {
+  const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
+  const [gameOver, setGameOver] = useState(false);
+  const [highScore, setHighScore] = useState(() => {
+    const saved = localStorage.getItem('fruitNinjaHighScore');
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [timeLeft, setTimeLeft] = useState(60); // Default time limit: 60 seconds
+  const [showMenu, setShowMenu] = useState(true);
   
-  // Assets
-  const fruitImages: Record<string, p5.Image> = {};
-  const slicedFruitImages: Record<string, p5.Image[]> = {};
-  let backgroundImage: p5.Image;
-  let gameOverImage: p5.Image;
-  let scoreImage: p5.Image;
-  const livesImages: p5.Image[] = [];
-  const lostLivesImages: p5.Image[] = [];
-  
-  // Define a type for sound objects that may come from p5.sound
-  type SoundObject = {
-    play: () => void;
-    stop: () => void;
-  };
-  
-  // Sounds
-  let spliceSound: SoundObject | null = null;
-  let missedSound: SoundObject | null = null;
-  let boomSound: SoundObject | null = null;
-  let gameOverSound: SoundObject | null = null;
-  let startSound: SoundObject | null = null;
+  const gameContainerRef = useRef<HTMLDivElement>(null);
+  const p5InstanceRef = useRef<p5 | null>(null);
 
-  // Fruit types
-  const fruitTypes = ["apple", "banana", "peach", "strawberry", "watermelon", "boom"];
-
-  // Preload assets
-  p.preload = () => {
-    try {
-      // Load images
-      backgroundImage = p.loadImage('/src/images/background.jpg');
-      gameOverImage = p.loadImage('/src/images/game-over.png');
-      scoreImage = p.loadImage('/src/images/score.png');
-      
-      // Load fruit images
-      fruitTypes.forEach(type => {
-        if (type !== 'boom') {
-          fruitImages[type] = p.loadImage(`/src/images/${type}.png`);
-          slicedFruitImages[type] = [
-            p.loadImage(`/src/images/${type}-1.png`),
-            p.loadImage(`/src/images/${type}-2.png`)
-          ];
-        } else {
-          fruitImages[type] = p.loadImage(`/src/images/${type}.png`);
-        }
-      });
-      
-      // Load lives images
-      for (let i = 1; i <= 3; i++) {
-        livesImages.push(p.loadImage(`/src/images/x${i}.png`));
-        lostLivesImages.push(p.loadImage(`/src/images/xx${i}.png`));
-      }
-      
-      // Load sounds - using p5.sound which may not be properly typed in TypeScript
-      try {
-        // p5.sound is loaded as a separate library and its types aren't properly recognized
-        // @ts-expect-error - p5.sound library methods aren't included in the p5 type definitions
-        spliceSound = p.loadSound('/src/sounds/splatter.mp3');
-        // @ts-expect-error - p5.sound library methods aren't included in the p5 type definitions
-        missedSound = p.loadSound('/src/sounds/missed.mp3');
-        // @ts-expect-error - p5.sound library methods aren't included in the p5 type definitions
-        boomSound = p.loadSound('/src/sounds/boom.mp3');
-        // @ts-expect-error - p5.sound library methods aren't included in the p5 type definitions
-        gameOverSound = p.loadSound('/src/sounds/over.mp3');
-        // @ts-expect-error - p5.sound library methods aren't included in the p5 type definitions
-        startSound = p.loadSound('/src/sounds/start.mp3');
-      } catch (soundError) {
-        console.error("Error loading sounds:", soundError);
-      }
-    } catch (error) {
-      console.error("Error loading assets:", error);
-    }
-  };
-
-  // Setup function
-  p.setup = () => {
-    p.createCanvas(800, 635);
-    p.frameRate(60);
-    
-    // Initialize sword
-    sword = {
-      swipes: [],
-      update() {
-        if (this.swipes.length > 20) {
-          this.swipes.splice(0, 2);
-        }
-        if (this.swipes.length > 0) {
-          this.swipes.splice(0, 1);
-        }
-      },
-      draw(p) {
-        for (let i = 0; i < this.swipes.length; i++) {
-          const size = p.map(i, 0, this.swipes.length, 2, 27);
-          p.noStroke();
-          p.fill(255);
-          p.ellipse(this.swipes[i].x, this.swipes[i].y, size);
-        }
-      },
-      swipe(x, y) {
-        this.swipes.push({ x, y });
-      },
-      checkSlice(fruit) {
-        if (fruit.sliced || this.swipes.length < 2) {
-          return false;
-        }
-        
-        const length = this.swipes.length;
-        const stroke1 = this.swipes[length - 1];
-        const stroke2 = this.swipes[length - 2];
-        
-        const d1 = p.dist(stroke1.x, stroke1.y, fruit.x, fruit.y);
-        const d2 = p.dist(stroke2.x, stroke2.y, fruit.x, fruit.y);
-        const d3 = p.dist(stroke1.x, stroke1.y, stroke2.x, stroke2.y);
-        
-        const sliced = (d1 < fruit.size / 2) || ((d1 < d3 && d2 < d3) && (d3 < p.width / 4));
-        return sliced;
-      }
+  // Game settings
+  const getGameSettings = (): GameSettings => {
+    return { 
+      timeLimit: 60, 
+      fruitSpawnRate: 30, 
+      bombFrequency: 0.15 
     };
-    
-    // Set initial game state
-    resetGame();
   };
 
-  // Draw function
-  p.draw = () => {
-    p.background(backgroundImage);
+  // Function to restart the game
+  const handleRestart = () => {
+    setScore(0);
+    setLives(3);
+    setTimeLeft(getGameSettings().timeLimit);
+    setGameOver(false);
+    setShowMenu(false);
     
-    if (!isPlaying) {
-      drawStartScreen();
-      return;
+    // Remove old canvas and create a new p5 instance
+    if (p5InstanceRef.current) {
+      p5InstanceRef.current.remove();
     }
     
-    if (gameOver) {
-      drawGameOverScreen();
-      return;
-    }
-    
-    // Game logic
-    updateGame();
-    
-    // Draw game elements
-    drawFruits();
-    sword.draw(p);
-    drawHUD();
-    
-    // Update timer
-    if (p.millis() - lastTimerUpdate > 1000) {
-      timerValue--;
-      lastTimerUpdate = p.millis();
-      
-      if (timerValue <= 0) {
-        endGame();
-      }
+    if (gameContainerRef.current) {
+      createP5Sketch();
     }
   };
 
-  // Mouse events
-  p.mousePressed = () => {
-    if (!isPlaying && !gameOver) {
-      startGame();
-      return;
-    }
-    
-    if (gameOver) {
-      if (isMouseOverRestartButton()) {
-        resetGame();
-        startGame();
-      }
-      return;
-    }
-    
-    sword.swipe(p.mouseX, p.mouseY);
-    fruitsSlicedPerPress = 0;
-  };
-  
-  p.mouseDragged = () => {
-    if (!isPlaying || gameOver) return false;
-    
-    sword.swipe(p.mouseX, p.mouseY);
-    
-    // Check for slicing
-    fruits.forEach(fruit => {
-      if (!fruit.sliced && sword.checkSlice(fruit)) {
-        fruit.sliced = true;
-        
-        if (fruit.type === 'boom') {
-          if (boomSound) boomSound.play();
-          endGame();
-        } else {
-          if (spliceSound) spliceSound.play();
-          score++;
-          fruitsSlicedPerPress++;
-        }
-      }
-    });
-    
-    return false; // Prevent default
-  };
-  
-  p.mouseReleased = () => {
-    if (fruitsSlicedPerPress > 1) {
-      // Bonus for multiple fruits sliced in one swipe
-      score += fruitsSlicedPerPress - 1;
-    }
-    fruitsSlicedPerPress = 0;
-  };
-
-  // Game functions
+  // Function to start game
   const startGame = () => {
-    isPlaying = true;
-    gameOver = false;
-    if (startSound) startSound.play();
+    setLives(3);
+    setTimeLeft(getGameSettings().timeLimit);
+    handleRestart();
   };
-  
-  const resetGame = () => {
-    score = 0;
-    lives = 3;
-    timerValue = 60;
-    fruits = [];
-    isPlaying = false;
-    gameOver = false;
-    lastTimerUpdate = p.millis();
-  };
-  
-  const endGame = () => {
-    isPlaying = false;
-    gameOver = true;
-    if (gameOverSound) gameOverSound.play();
-  };
-  
-  const updateGame = () => {
-    // Update sword
-    if (p.frameCount % 2 === 0) {
-      sword.update();
-    }
-    
-    // Spawn new fruits
-    if (p.frameCount % 15 === 0) {
-      if (p.noise(p.frameCount) > 0.7) {
-        fruits.push(createRandomFruit());
-      }
+
+  // Create the p5 sketch
+  const createP5Sketch = () => {
+    if (!gameContainerRef.current) return;
+
+    const sketch = (p: p5) => {
+      // Game variables
+      type Fruit = {
+        x: number;
+        y: number;
+        xSpeed: number;
+        ySpeed: number;
+        size: number;
+        color: string;
+        sliced: boolean;
+        visible: boolean;
+        type: string;
+      };
+
+      type Particle = {
+        x: number;
+        y: number;
+        xSpeed: number;
+        ySpeed: number;
+        size: number;
+        color: string;
+        life: number;
+      };
+
+      const fruits: Fruit[] = [];
+      const particles: Particle[] = [];
+      const swipes: { x: number; y: number }[] = [];
+      let lastMouseX = 0;
+      let lastMouseY = 0;
+      const gravity = 0.25;
       
-      // Increase difficulty as time decreases
-      if (timerValue < 30 && p.noise(p.frameCount + 500) > 0.7) {
-        fruits.push(createRandomFruit());
-      }
-      
-      if (timerValue < 15 && p.noise(p.frameCount + 1000) > 0.7) {
-        fruits.push(createRandomFruit());
-      }
-    }
-    
-    // Update fruits
-    for (let i = fruits.length - 1; i >= 0; i--) {
-      const fruit = fruits[i];
-      
-      // Update position
-      fruit.x += fruit.xSpeed;
-      fruit.y += fruit.ySpeed;
-      fruit.ySpeed += 0.1; // gravity
-      
-      // Check if fruit is off screen
-      if (fruit.y - fruit.size > p.height) {
-        if (!fruit.sliced && fruit.type !== 'boom') {
-          // Missed a fruit
-          if (missedSound) missedSound.play();
-          lives--;
+      const fruitTypes = ['apple', 'banana', 'peach', 'watermelon', 'bomb'];
+      const fruitColors = {
+        apple: '#e74c3c',
+        banana: '#f1c40f',
+        peach: '#e67e22',
+        watermelon: '#2ecc71',
+        bomb: '#34495e'
+      };
+
+      // Create particles for sliced fruits
+      const createParticles = (fruit: Fruit, count: number) => {
+        const color = fruit.color;
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: fruit.x,
+            y: fruit.y,
+            xSpeed: p.random(-2, 2),
+            ySpeed: p.random(-2, 2),
+            size: p.random(3, 8),
+            color,
+            life: p.random(20, 40)
+          });
+        }
+      };
+
+      // Function to create a random fruit
+      const createFruit = (): Fruit => {
+        const x = p.random(p.width);
+        const y = p.height;
+        
+        // Decide if this should be a bomb based on frequency
+        const settings = getGameSettings();
+        const shouldBeBomb = p.random() < settings.bombFrequency;
+        const type = shouldBeBomb ? 'bomb' : fruitTypes[Math.floor(p.random(fruitTypes.length - 1))]; // Exclude bomb from regular selection
+        
+        const size = type === 'watermelon' ? 60 : 40;
+        
+        return {
+          x,
+          y,
+          xSpeed: x > p.width / 2 ? p.random(-3, -1) : p.random(1, 3),
+          ySpeed: p.random(-15, -10),
+          size,
+          color: fruitColors[type as keyof typeof fruitColors],
+          sliced: false,
+          visible: true,
+          type
+        };
+      };
+
+      // Function to update a fruit's position
+      const updateFruit = (fruit: Fruit) => {
+        if (fruit.sliced) {
+          // If sliced, apply more gravity
+          fruit.ySpeed += gravity * 1.5;
+        } else {
+          fruit.ySpeed += gravity;
+        }
+        
+        fruit.x += fruit.xSpeed;
+        fruit.y += fruit.ySpeed;
+        
+        // Mark as not visible if it falls off screen
+        if (fruit.y > p.height) {
+          fruit.visible = false;
           
-          if (lives <= 0) {
-            endGame();
+          // If it wasn't sliced and it's not a bomb, lose a life
+          if (!fruit.sliced && fruit.type !== 'bomb' && !gameOver) {
+            setLives((prev) => {
+              const newLives = prev - 1;
+              if (newLives <= 0) {
+                setGameOver(true);
+                updateHighScore();
+              }
+              return newLives;
+            });
+          }
+        }
+      };
+
+      // Function to update particles
+      const updateParticles = () => {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const particle = particles[i];
+          
+          // Update position
+          particle.x += particle.xSpeed;
+          particle.y += particle.ySpeed;
+          particle.ySpeed += gravity * 0.1;
+          
+          // Decrease life
+          particle.life--;
+          
+          // Remove dead particles
+          if (particle.life <= 0) {
+            particles.splice(i, 1);
+          }
+        }
+      };
+
+      // Function to check if a swipe has sliced a fruit
+      const checkSlice = (fruit: Fruit) => {
+        if (fruit.sliced || swipes.length < 2) return false;
+        
+        const lastSwipe = swipes[swipes.length - 1];
+        
+        // Distance calculations
+        const d1 = p.dist(lastSwipe.x, lastSwipe.y, fruit.x, fruit.y);
+        
+        // If the swipe is close enough to the fruit, slice it
+        if (d1 < fruit.size/2) {
+          fruit.sliced = true;
+          
+          // Create particles for sliced fruit
+          createParticles(fruit, 10);
+          
+          if (fruit.type === 'bomb') {
+            // If it's a bomb, lose a life
+            setLives((prev) => {
+              const newLives = prev - 1;
+              if (newLives <= 0) {
+                setGameOver(true);
+                updateHighScore();
+              }
+              return newLives;
+            });
+          } else {
+            // If it's a fruit, add points
+            setScore(prev => prev + 1);
+          }
+          
+          return true;
+        }
+        
+        return false;
+      };
+
+      // Update high score
+      const updateHighScore = () => {
+        if (score > highScore) {
+          setHighScore(score);
+          localStorage.setItem('fruitNinjaHighScore', score.toString());
+        }
+      };
+
+      // p5.js setup function
+      p.setup = () => {
+        p.createCanvas(800, 600);
+        p.frameRate(60);
+        p.colorMode(p.RGB);
+      };
+
+      // p5.js draw function - runs continuously
+      p.draw = () => {
+        p.background(51);
+        
+        if (gameOver) {
+          return;
+        }
+        
+        // Handle time countdown
+        if (p.frameCount % 60 === 0) {
+          setTimeLeft(prevTime => {
+            const newTime = prevTime - 1;
+            if (newTime <= 0) {
+              setGameOver(true);
+              updateHighScore();
+              return 0;
+            }
+            return newTime;
+          });
+        }
+        
+        // Add new fruits randomly based on game settings
+        const settings = getGameSettings();
+        if (p.frameCount % settings.fruitSpawnRate === 0) {
+          fruits.push(createFruit());
+        }
+        
+        // Draw and update particles
+        for (let i = 0; i < particles.length; i++) {
+          const particle = particles[i];
+          p.fill(particle.color);
+          p.noStroke();
+          p.circle(particle.x, particle.y, particle.size);
+        }
+        updateParticles();
+        
+        // Draw and update existing fruits
+        for (let i = fruits.length - 1; i >= 0; i--) {
+          const fruit = fruits[i];
+          
+          // Draw the fruit
+          p.fill(fruit.color);
+          p.push();
+          p.translate(fruit.x, fruit.y);
+          p.textSize(fruit.size);
+          p.textAlign(p.CENTER, p.CENTER);
+          
+          // Use emojis to represent fruits
+          if (fruit.sliced) {
+            // Draw sliced fruit (show cut version)
+            if (fruit.type === 'apple') p.text('🍎', -10, 0);
+            else if (fruit.type === 'banana') p.text('🍌', -10, 0);
+            else if (fruit.type === 'peach') p.text('🍑', -10, 0);
+            else if (fruit.type === 'watermelon') p.text('🍉', -10, 0);
+            else if (fruit.type === 'bomb') p.text('💣', -10, 0);
+          } else {
+            // Draw whole fruit
+            if (fruit.type === 'apple') p.text('🍎', 0, 0);
+            else if (fruit.type === 'banana') p.text('🍌', 0, 0);
+            else if (fruit.type === 'peach') p.text('🍑', 0, 0);
+            else if (fruit.type === 'watermelon') p.text('🍉', 0, 0);
+            else if (fruit.type === 'bomb') p.text('💣', 0, 0);
+          }
+          p.pop();
+          
+          // Update fruit position
+          updateFruit(fruit);
+          
+          // Check if the fruit is sliced by the current swipe
+          checkSlice(fruit);
+          
+          // Remove invisible fruits
+          if (!fruit.visible) {
+            fruits.splice(i, 1);
           }
         }
         
-        // Remove fruit
-        fruits.splice(i, 1);
-      }
-    }
-  };
-  
-  const createRandomFruit = (): Fruit => {
-    const x = p.random(p.width);
-    const size = p.random(40, 60);
-    const type = fruitTypes[Math.floor(p.random(fruitTypes.length))];
-    const color = p.color(p.random(255), p.random(255), p.random(255));
-    
-    return {
-      x,
-      y: p.height + size,
-      xSpeed: x > p.width / 2 ? p.random(-2.8, -0.5) : p.random(0.5, 2.8),
-      ySpeed: p.random(-15, -10),
-      size,
-      color,
-      type,
-      sliced: false,
-      visible: true
+        // Draw swipes (the sword/blade)
+        p.stroke(255);
+        p.strokeWeight(3);
+        for (let i = 0; i < swipes.length - 1; i++) {
+          p.line(swipes[i].x, swipes[i].y, swipes[i + 1].x, swipes[i + 1].y);
+        }
+        
+        // Gradually remove old swipes
+        if (swipes.length > 10) {
+          swipes.splice(0, 1);
+        }
+        
+        // Track mouse movement for swipes
+        if (p.mouseIsPressed && p.mouseX !== lastMouseX && p.mouseY !== lastMouseY) {
+          swipes.push({ x: p.mouseX, y: p.mouseY });
+          lastMouseX = p.mouseX;
+          lastMouseY = p.mouseY;
+        }
+      };
+      
+      // Register mouse release to clear swipes
+      p.mouseReleased = () => {
+        swipes.splice(0, swipes.length);
+      };
     };
-  };
-  
-  // Drawing functions
-  const drawStartScreen = () => {
-    p.fill(255);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.textSize(32);
-    p.text("Click to Start", p.width / 2, p.height / 2);
-  };
-  
-  const drawGameOverScreen = () => {
-    p.image(gameOverImage, p.width / 2 - 245, 80, 490, 85);
-    
-    p.fill(255);
-    p.textAlign(p.CENTER, p.CENTER);
-    p.textSize(40);
-    p.text(`Final Score: ${score}`, p.width / 2, p.height / 2);
-    
-    // Draw restart button
-    p.fill(255, 147, 21);
-    p.rect(p.width / 2 - 100, p.height / 2 + 50, 200, 60, 10);
-    p.fill(255);
-    p.textSize(24);
-    p.text("Play Again", p.width / 2, p.height / 2 + 80);
-  };
-  
-  const drawFruits = () => {
-    fruits.forEach(fruit => {
-      if (fruit.sliced && fruit.type !== 'boom') {
-        // Draw sliced fruit
-        const slicedImages = slicedFruitImages[fruit.type];
-        if (slicedImages) {
-          p.image(slicedImages[0], fruit.x - 25, fruit.y, fruit.size, fruit.size);
-          p.image(slicedImages[1], fruit.x + 25, fruit.y, fruit.size, fruit.size);
-        }
-      } else {
-        // Draw whole fruit
-        const img = fruitImages[fruit.type];
-        if (img) {
-          p.image(img, fruit.x - fruit.size / 2, fruit.y - fruit.size / 2, fruit.size, fruit.size);
-        }
-      }
-    });
-  };
-  
-  const drawHUD = () => {
-    // Draw score
-    p.image(scoreImage, 10, 10, 40, 40);
-    p.fill(255, 147, 21);
-    p.textAlign(p.LEFT, p.TOP);
-    p.textSize(40);
-    p.text(score, 60, 15);
-    
-    // Draw timer
-    p.textAlign(p.CENTER, p.TOP);
-    p.text(`Time: ${timerValue}`, p.width / 2, 15);
-    
-    // Draw lives
-    drawLives();
-  };
-  
-  const drawLives = () => {
-    // Draw lives indicators
-    for (let i = 0; i < 3; i++) {
-      const img = i < lives ? livesImages[i] : lostLivesImages[i];
-      p.image(img, p.width - 110 + i * 30, 20, img.width, img.height);
-    }
-  };
-  
-  const isMouseOverRestartButton = () => {
-    return (
-      p.mouseX > p.width / 2 - 100 &&
-      p.mouseX < p.width / 2 + 100 &&
-      p.mouseY > p.height / 2 + 50 &&
-      p.mouseY < p.height / 2 + 110
-    );
-  };
-};
 
-// Main component
-const FruitNinja = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
+    // Create new p5 instance
+    p5InstanceRef.current = new p5(sketch, gameContainerRef.current);
+  };
 
+  // Initialize p5 sketch
   useEffect(() => {
-    // Set loaded state after a delay to ensure assets are loaded
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 1000);
+    if (!showMenu) {
+      createP5Sketch();
+    }
     
-    return () => clearTimeout(timer);
-  }, []);
+    // Clean up on component unmount
+    return () => {
+      if (p5InstanceRef.current) {
+        p5InstanceRef.current.remove();
+      }
+    };
+  }, [showMenu]);
 
   return (
     <div className="fruit-ninja-container">
-      {!isLoaded && (
-        <div className="loading">
-          <h2>Loading Game...</h2>
+      {showMenu ? (
+        <div className="game-menu">
+          <h1>Fruit Ninja</h1>
+          <p className="high-score">High Score: {highScore}</p>
+          <div className="mode-buttons">
+            <button onClick={startGame}>Start Game</button>
+          </div>
+          <div className="instructions">
+            <h2>How to Play</h2>
+            <p>Slice fruits with your mouse or finger. Avoid bombs!</p>
+            <p>You have 3 lives and 60 seconds.</p>
+            <p>Miss a fruit and lose a life.</p>
+            <p>Slice a bomb and lose a life.</p>
+            <p>Score as many points as possible before time runs out or you lose all lives!</p>
+          </div>
         </div>
+      ) : (
+        <>
+          <div className="game-info">
+            <div className="score">Score: {score}</div>
+            <div className="timer">Time: {timeLeft}s</div>
+            <div className="lives">Lives: {lives}</div>
+          </div>
+          
+          <div className="game-area" ref={gameContainerRef} />
+          
+          {gameOver && (
+            <div className="game-over">
+              <h2>Game Over!</h2>
+              <p>Your score: {score}</p>
+              {score > highScore && (
+                <p className="new-high-score">New High Score!</p>
+              )}
+              <div className="game-over-buttons">
+                <button onClick={handleRestart}>Play Again</button>
+                <button onClick={() => setShowMenu(true)}>Main Menu</button>
+              </div>
+            </div>
+          )}
+        </>
       )}
-      <ReactP5Wrapper sketch={sketch} />
     </div>
   );
 };
