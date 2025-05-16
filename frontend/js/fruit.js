@@ -40,19 +40,31 @@ Fruit.prototype.update = function(){
     }
 };
 
+// Original randomFruit function - now replaced with version in main.js
 function randomFruit(){ // Create randon fruit
+    var bombProbability = 0.3
+    var idx = round(random(0,fruitsList.length-1));
+
+    if (random() < bombProbability) {
+       console.log("helloo bomb")
+       // Generate a bomb (last item in fruitsList)
+       idx = fruitsList.length - 1;
+     }
+
     var x = random(width);
     var y = height;
     var size = noise(frameCount)*20 + 40;
     var col = color(random(255),random(255),random(255));
     var speed = random(3,5);
-    var idx = round(random(0,fruitsList.length-1));
     var fruit = fruitsImgs[idx];
     var slicedFruit1 = slicedFruitsImgs[2*idx];
     var slicedFruit2 = slicedFruitsImgs[2*idx + 1];
     var name = fruitsList[idx];
+
+
     return new Fruit(x,y,speed,col,size,fruit,slicedFruit1,slicedFruit2,name);
 }
+
 
 function randomXSpeed(x){
     if( x > width/2 ){

@@ -1,7 +1,4 @@
-import { db } from "../../../lib/database"
-import CodedError from "../../../lib/CodedError"
-import LoginModel from "../login/model"
-import Router from "../../../lib/router"
+import Router from "@/lib/router"
 
 const logoutRouter = new Router()
 

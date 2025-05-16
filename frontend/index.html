@@ -1,140 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Fruit Ninja</title>
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" />
+
     <!-- STYLE -->
     <style>
-        body{
-            text-align: center;
-            background: url("images/background.jpg") no-repeat center center;
-            background-size: cover;   
-        }
+      body {
+        text-align: center;
+        background: url("images/background.jpg") no-repeat center center;
+        background-size: cover;
+      }
     </style>
 
     <!-- FAVICON -->
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-        <!-- Tailwind CSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
-</head>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
 
-<body class="flex flex-col pt-8 items-center justify-start min-h-screen bg-cover bg-center" style="background-image: url('images/background.jpg');"></body>
-    <div id="gameCanvas" class="relative w-[800px] h-[635px]">
+  <body
+    class="flex flex-col lg:pt-8 items-center justify-start min-h-screen bg-cover bg-center"
+    style="background-image: url('images/background.jpg')"
+  >
+    <div class="">
+      <div
+        id="gameCanvas"
+        class="relative lg:w-[800px] lg:h-[635px] w-screen h-screen lg:mt-5 bg-black rounded-lg shadow-lg overflow-hidden"
+      >
         <div id="gameMenu" class="absolute right-0 left-0 hidden">
-            <div class="flex justify-center items-center gap-4 mt-4">
-                <img src="images/fruit.png" alt="newgame" class="w-[358px] h-[195px]">
-                <img src="images/ninja.png" alt="fruit" class="w-[318px] h-[165px] mt-5">
-            </div>
-            <div id="playGameContainer" class="relative w-full h-[400px] flex items-center justify-center">
-                <img src="images/new-game.png" alt="newgame" class="playGame absolute w-[200px] h-[200px]">
-                <img src="images/fruitMode.png" alt="fruit" class="playGame absolute w-[90px] h-[90px]">
-            </div>
+          <div class="flex justify-center items-center gap-4 sm:mt-10">
+            <img src="images/fruit.png" alt="fruit" class="lg:w-[358px] lg:h-[195px] w-[200px] h-[95px]" />
+            <img src="images/ninja.png" alt="ninja" class="lg:w-[318px] lg:h-[165px] w-[218px] h-[90px] mt-5" />
+            <img src="images/game-over.png" alt="gameOver" class="lg:w-[500px] lg:h-[140px] w-[300px] h-[75px] mt-8 hidden" />
+          </div>
+          <div id="playGameContainer" class="relative w-full lg:h-[400px] max-lg:mt-32 flex items-center justify-center">
+            <img src="images/new-game.png" alt="newgame" class="playGame absolute lg:w-[200px] lg:h-[200px] w-[150px] h-[150px]" />
+            <img src="images/fruitMode.png" alt="fruitMode" class="playGame absolute lg:w-[90px] lg:h-[90px] w-[70px] h-[70px]" />
+          </div>
         </div>
         <div id="logout" class="absolute top-52 right-2 bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden">
-            <button id="logout-button" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 w-20">Logout</button>
+          <button id="logout-button" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 w-20">Logout</button>
         </div>
-    </div>
+        <div
+          id="open_dashboard"
+          class="absolute bottom-5 right-2 bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden"
+        >
+          <button id="leaderboardOpenButton" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 w-20">
+            Leaderboard
+          </button>
+        </div>
+        <div id="rotate-portrait-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50 hidden">
+          <img src="images/rotate-phone.png" alt="Rotate Device" class="w-24 mb-4" />
+          <p class="text-white text-xl font-bold">Please rotate your device to <span class="text-yellow-300">landscape</span> mode</p>
+        </div>
 
-    <div id="login-form" class="absolute top-60 bg-gradient-to-b from-orange-200 to-orange-400 bg-black bg-opacity-80 p-5 rounded-3xl z-10 hidden">
+        <div
+        id="login-form"
+        class="absolute inset-0 flex items-center justify-center z-10 hidden"
+      >
+      <div class="bg-gradient-to-b from-orange-200 to-orange-400 w-[32%] max-w-md bg-black bg-opacity-80 p-5 rounded-3xl">
         <div class="relative h-12 mb-4 flex items-center justify-center">
-            <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
-            <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
-            <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">Login</h1>
+          <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
+          <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
+          <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">Login</h1>
         </div>
-        <form id="loginForm" class="space-y-4">
-            <div>
-                <label for="name" class="block text-sm font-medium">Name:</label>
-                <input type="text" id="name" name="name" required class="w-full h-8 mb-2 p-2 rounded border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300">
-            </div>
-            <div>
-                <label for="password" class="block text-sm font-medium">Password:</label>
-                <input type="password" id="password" name="password" required class="w-full h-8 mb-2 p-2 rounded border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300">
-            </div>
-            <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Login</button>
+        <form id="loginForm" class="space-y-2">
+          <div>
+            <label for="name" class="block text-sm font-medium">Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="w-full h-8 mb-2 p-2 rounded border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300"
+            />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              class="w-full h-8 mb-2 p-2 rounded border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300"
+            />
+          </div>
+          <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded hover:bg-orange-600">Login</button>
         </form>
-    </div>
-  
-    <div id="high_scores" class="absolute top-60 bg-gradient-to-b from-orange-200 to-orange-400 p-5 rounded-3xl z-10 hidden">
+      </div>
+      </div>
+    
+      <div
+      id="high_scores"
+      class="absolute inset-0 flex items-center justify-center z-10 hidden">
+    <div class="bg-gradient-to-b from-orange-200 to-orange-400 w-[50%] max-w-md bg-black bg-opacity-80 p-5 rounded-3xl">
         <div class="relative h-12 mb-4 mt-3 px-3 flex items-center justify-center w-full">
-            <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
-            <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
-            <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">New High Score!</h1>
+          <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
+          <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
+          <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">New High Score!</h1>
         </div>
         <form id="highScoresForm" class="space-y-4">
-            <input type="email" id="email" name="email" placeholder="Email" class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300">
-            <div class="flex gap-2 mt-2">
-                <button id="cancel" type="submit" class="w-full py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900">Cancel</button>
-                <button id="enter" type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">Enter</button>
-            </div>
-        </form>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Email"
+            class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300"
+          />
+          <div class="flex gap-2 mt-2">
+            <button id="cancel" type="submit" class="w-full py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900">Cancel</button>
+            <button id="enter" type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">Enter</button>
+          </div>
+        </form>  
+  </div>
+      </div>
     </div>
 
     <!-- <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20"></div> -->
-    <div id="confirm_reset" class="absolute space-y-1 w-96 top-60 bg-gradient-to-b from-orange-200 to-orange-400 p-5 rounded-3xl hidden z-30">
-        <div class="relative h-12 px-3 flex items-center justify-center w-full">
-            <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
-            <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
-            <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">Reset Leaderboard!</h1>
+    <div
+      id="confirm_reset"
+      class="absolute space-y-1 w-96 top-60 bg-gradient-to-b from-orange-200 to-orange-400 p-5 rounded-3xl hidden z-30"
+    >
+      <div class="relative h-12 px-3 flex items-center justify-center w-full">
+        <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
+        <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
+        <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">Reset Leaderboard!</h1>
+      </div>
+      <form id="resetLeaderboardForm" class="space-y-4">
+        <div>
+          <p>please enter the password to reset the leaderbaord.</p>
+          <input
+            type="password"
+            id="location_password"
+            name="password"
+            placeholder="password"
+            class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300"
+          />
         </div>
-        <form id="resetLeaderboardForm" class="space-y-4">
-            <div>
-                <p>please enter the password to reset the leaderbaord.</p>
-                <input type="password" id="location_password" name="password" placeholder="password" class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300">
-            </div>
-            <div class="flex gap-2 mt-2">
-                <button id="reset_cancel" type="submit" class="w-full py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900">Cancel</button>
-                <button id="reset_enter" type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">Enter</button>
-            </div>
-        </form>
+        <div class="flex gap-2 mt-2">
+          <button id="reset_cancel" type="submit" class="w-full py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900">Cancel</button>
+          <button id="reset_enter" type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">Enter</button>
+        </div>
+      </form>
     </div>
+  <div
+      id="leaderboard"
+      class="absolute space-y-3 lg:w-96 w-full bottom-2 left-2 max-lg:left-1/2 max-lg:transform max-lg:-translate-x-1/2 bg-gradient-to-b from-orange-200 to-orange-300 rounded-3xl p-3 shadow-xl hidden"
+    >
+    <!-- Close leaderboard button  -->
+    <button id="leaderboardCloseButton" class="absolute top-3 right-1 text-orange-500 hover:text-orange-700 lg:hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+     </button>
+  
+      <!-- Header -->
+      <div class="relative h-12 mt-3 mx-3 flex items-center justify-center">
+        <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-lg"></div>
+        <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-lg"></div>
+        <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-lg">LEADERBOARD</h1>
+      </div>
 
-    <div id="leaderboard" class="absolute space-y-3 w-96 bottom-2 left-2 bg-gradient-to-b from-orange-200 to-orange-300 rounded-3xl p-3 shadow-xl hidden">
-        <!-- Header -->
-        <div class="relative h-12 mt-3 mx-3 flex items-center justify-center">
-            <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
-            <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
-            <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">LEADERBOARD</h1>
-        </div>
-
-        <!-- Leaderboard entries -->
-         <div class="space-y-1 bg-gradient-to-b from-orange-400 to-orange-600 rounded-3xl p-2">
-            <!-- <div>
+      <!-- Leaderboard entries -->
+      <div class="space-y-1 bg-gradient-to-b from-orange-400 to-orange-600 rounded-3xl p-2">
+        <!-- <div>
                 <button id="reset_leaderboard" class="py-1 px-4 bg-red-500 text-white rounded-xl hover:bg-orange-600">Reset</button>
-                </div> -->
-                <div id="leaderboard-rows" class="space-y-1">
-                    <!-- Rows will be inserted here by JavaScript -->
-                </div>
-            </div>
+        </div> -->
+        <div id="leaderboard-rows" class="lg:space-y-1 max-lg:grid max-lg:grid-flow-col max-lg:grid-rows-5 gap-1">
+          <!-- Rows will be inserted here by JavaScript -->
+        </div>
+      </div>
     </div>
 
-    
-    <!-- <div id="gameMenu" class="relative w-[800px] h-[635px] mt-5 hidden">
-        <div class="flex justify-center items-center gap-4">
-            <img src="images/fruit.png" alt="newgame" class="w-[358px] h-[195px]">
-            <img src="images/ninja.png" alt="fruit" class="w-[318px] h-[165px] mt-5">
-        </div>
-        <div id="playGame">
-            <img src="images/new-game.png" alt="newgame" class="absolute w-[200px] h-[200px] top-[250px] left-1/2 transform -translate-x-1/2 z-10">
-            <img src="images/fruitMode.png" alt="fruit" class="absolute w-[90px] h-[90px] top-[305px] left-1/2 transform -translate-x-1/2 z-10">
-        </div>
-    </div> -->
 
-    <!-- P5JS LIBRARY -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="p5/p5.js"></script>
-    <script type="text/javascript" src="p5/addons/p5.dom.js"></script>
-    <script type="text/javascript" src="p5/addons/p5.sound.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+<!-- P5.js and jQuery Libraries -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="p5/p5.js"></script>
+<script type="text/javascript" src="p5/addons/p5.dom.js"></script>
+<script type="text/javascript" src="p5/addons/p5.sound.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- JS FILES -->
-    <script src="./js/main.js"></script>     
-    <script src="./js/swords.js"></script>     
-    <script src="./js/fruit.js"></script>    
+<!-- Custom JavaScript Files -->
+<script src="./js/main.js"></script>
+<script src="./js/swords.js"></script>
+<script src="./js/fruit.js"></script>
 </body>
 </html>

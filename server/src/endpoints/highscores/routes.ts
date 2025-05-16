@@ -5,8 +5,14 @@ const highscoresRouter = new Router()
 
 highscoresRouter.get("/", {}, async (req, res) => {
   try {
-    await req.getSession()
-    const highscoresList = await db.selectFrom("Highscores").orderBy("Highscores.score", "desc").selectAll().limit(10).execute()
+    const session = await req.getSession()
+    const highscoresList = await db
+      .selectFrom("Highscores")
+      .where("Highscores.location_id", "=", session.location_id)
+      .orderBy("Highscores.score", "desc")
+      .selectAll()
+      .limit(10)
+      .execute()
     res.json(highscoresList)
   } catch (error) {
     console.error(error)
@@ -42,14 +48,22 @@ highscoresRouter.post("/", {}, async (req, res) => {
   try {
     const session = await req.getSession()
     const { email, score } = req.body
+    const emailExist = await db.selectFrom("Highscores").where("email", "=", email).selectAll().executeTakeFirst()
+
+    if (emailExist?.email) {
+      await db.updateTable("Highscores").set({ score }).where("email", "=", email).execute()
+      return res.status(200).success({ success: true, message: "Highscore updated successfully" })
+    }
+
     const body = {
       email,
       score,
       location_id: session.location_id,
     }
+
     await db.insertInto("Highscores").values(body).execute()
 
-    res.status(200).json({ success: true, message: "Highscore added successfully" })
+    res.status(200).success({ success: true, message: "Highscore added successfully" })
   } catch (error) {
     console.error(error)
     res.status(500).send("Internal Server Error")

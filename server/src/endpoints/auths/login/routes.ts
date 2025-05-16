@@ -1,16 +1,11 @@
 import { db } from "../../../lib/database"
 import CodedError from "../../../lib/CodedError"
-import LoginModel from "./model"
-import Router from "../../../lib/router"
+import Router from "@/lib/router"
 
 const loginRouter = new Router()
 
 loginRouter.post("/", {}, async (req, res) => {
   try {
-    const loginMethods = new LoginModel(req, res)
-
-    console.log(req.body)
-
     const { name, password } = req.body ?? {}
 
     const location = await db.selectFrom("Locations").where("name", "=", name).selectAll().executeTakeFirst()
