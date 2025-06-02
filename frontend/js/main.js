@@ -8,7 +8,7 @@ var isPlay = false
 var gravity = 0.1
 var sword
 var fruit = []
-var fruitsList = ["apple", "banana", "peach", "strawberry", "watermelon", "boom"]
+var fruitsList = ["apple", "chicken-nugget", "chocolate-milk", "cookie", "sandwich", "boom"]
 var fruitsImgs = [],
   slicedFruitsImgs = []
 var livesImgs = [],
@@ -36,11 +36,11 @@ function preload() {
 
   // LOAD IMAGES
   for (var i = 0; i < fruitsList.length - 1; i++) {
-    slicedFruitsImgs[2 * i] = loadImage("images/" + fruitsList[i] + "-1.png")
-    slicedFruitsImgs[2 * i + 1] = loadImage("images/" + fruitsList[i] + "-2.png")
+    slicedFruitsImgs[2 * i] = loadImage("images/items/" + fruitsList[i] + "-1.png")
+    slicedFruitsImgs[2 * i + 1] = loadImage("images/items/" + fruitsList[i] + "-2.png")
   }
   for (var i = 0; i < fruitsList.length; i++) {
-    fruitsImgs[i] = loadImage("images/" + fruitsList[i] + ".png")
+    fruitsImgs[i] = loadImage("images/items/" + fruitsList[i] + ".png")
   }
   for (var i = 0; i < 3; i++) {
     livesImgs[i] = loadImage("images/x" + (i + 1) + ".png")
@@ -48,7 +48,7 @@ function preload() {
   for (var i = 0; i < 3; i++) {
     livesImgs2[i] = loadImage("images/xx" + (i + 1) + ".png")
   }
-  bg = loadImage("images/background.jpg")
+  bg = loadImage("images/background/cafeteria-backgroundv1.png")
   foregroundImg = loadImage("images/home-mask.png")
   fruitLogo = loadImage("images/fruit.png")
   ninjaLogo = loadImage("images/ninja.png")
@@ -364,8 +364,8 @@ function playAgainButton() {
 // show Game Menu
 function showGameMenu(gameOver = 0, isHidden = 0) {
   const gameMenu2 = document.getElementById("gameMenu")
-  const fruit_img = document.querySelector('img[alt="fruit"]');
-  const ninja_img = document.querySelector('img[alt="ninja"]');
+  // const fruit_img = document.querySelector('img[alt="fruit"]');
+  // const ninja_img = document.querySelector('img[alt="ninja"]');
   const gameOver_img = document.querySelector('img[alt="gameOver"]');
   if(isHidden){
     gameMenu2.classList.add("hidden")
@@ -375,12 +375,12 @@ function showGameMenu(gameOver = 0, isHidden = 0) {
 
   if (gameOver) {
     gameOver_img.classList.remove("hidden")
-    fruit_img.classList.add("hidden")
-    ninja_img.classList.add("hidden")
+    // fruit_img.classList.add("hidden")
+    // ninja_img.classList.add("hidden")
   }else {
     gameOver_img.classList.add("hidden")
-    fruit_img.classList.remove("hidden")
-    ninja_img.classList.remove("hidden")
+    // fruit_img.classList.remove("hidden")
+    // ninja_img.classList.remove("hidden")
   }
 
 }
