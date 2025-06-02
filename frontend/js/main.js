@@ -159,9 +159,9 @@ async function setup() {
   if (!showLogin) {
     showLoginForm()
   } else {
-    drawLeaderboard({isHidden: 0})
-    ShowLogoutButton({isHidden: 0})
-    ShowLeaderboardButton({isHidden: 0})
+    drawLeaderboard({ isHidden: 0 })
+    ShowLogoutButton({ isHidden: 0 })
+    ShowLeaderboardButton({ isHidden: 0 })
   }
 }
 
@@ -193,12 +193,12 @@ function check() {
 
 function game() {
   clear()
-  background(bg) 
+  background(bg)
   // gameMenu.classList.add("hidden")
   showGameMenu(0, 1)
-  ShowLogoutButton({isHidden: 1})
-  ShowLeaderboardButton({isHidden: 1})
-  drawLeaderboard({isHidden: 1})
+  ShowLogoutButton({ isHidden: 1 })
+  ShowLeaderboardButton({ isHidden: 1 })
+  drawLeaderboard({ isHidden: 1 })
 
   if (mouseIsPressed) {
     // Reset the counter when the mouse is pressed
@@ -217,7 +217,7 @@ function game() {
     if (timerValue < 30) {
       if (noise(frameCount) > 0.69) {
         fruit.push(randomFruit())
-      }  
+      }
     }
     if (timerValue < 20) {
       if (noise(frameCount) > 0.69) {
@@ -236,13 +236,13 @@ function game() {
         // Missed fruit
         image(this.livesImgs2[0], fruit[i].x, fruit[i].y - 120, 50, 50)
         missed.play()
-        lives-- 
+        lives--
         x++
       }
       if (lives < 1) {
         // Check for lives
         gameOver()
-      } 
+      }
       fruit.splice(i, 1)
     } else {
       if (fruit[i].sliced && fruit[i].name == "boom") {
@@ -298,15 +298,15 @@ function mouseReleased() {
 }
 
 function drawScore() {
-  const responsiveImageSize = Math.min(width, height) * 0.07; // Adjust image size based on canvas dimensions
-  const responsiveTextSize = Math.min(width, height) * 0.07; // Adjust text size based on canvas dimensions
+  const responsiveImageSize = Math.min(width, height) * 0.07 // Adjust image size based on canvas dimensions
+  const responsiveTextSize = Math.min(width, height) * 0.07 // Adjust text size based on canvas dimensions
 
-  image(this.scoreImg, 10, 10, responsiveImageSize, responsiveImageSize);
-  textAlign(LEFT);
-  noStroke();
-  fill(255, 147, 21);
-  textSize(responsiveTextSize);
-  text(score, 10 + responsiveImageSize + 5, 7 + responsiveTextSize); // Position text next to the image
+  image(this.scoreImg, 10, 10, responsiveImageSize, responsiveImageSize)
+  textAlign(LEFT)
+  noStroke()
+  fill(255, 147, 21)
+  textSize(responsiveTextSize)
+  text(score, 10 + responsiveImageSize + 5, 7 + responsiveTextSize) // Position text next to the image
 }
 
 function gameOver() {
@@ -338,9 +338,9 @@ function addNewHighScores() {
 }
 
 function playAgainButton() {
-  drawLeaderboard({isHidden: 0})
-  ShowLogoutButton({isHidden: 0})
-  ShowLeaderboardButton({isHidden: 0})
+  drawLeaderboard({ isHidden: 0 })
+  ShowLogoutButton({ isHidden: 0 })
+  ShowLeaderboardButton({ isHidden: 0 })
 
   showGameMenu(1, 0)
   cnv.mouseClicked(() => {
@@ -366,10 +366,10 @@ function showGameMenu(gameOver = 0, isHidden = 0) {
   const gameMenu2 = document.getElementById("gameMenu")
   // const fruit_img = document.querySelector('img[alt="fruit"]');
   // const ninja_img = document.querySelector('img[alt="ninja"]');
-  const gameOver_img = document.querySelector('img[alt="gameOver"]');
-  if(isHidden){
+  const gameOver_img = document.querySelector('img[alt="gameOver"]')
+  if (isHidden) {
     gameMenu2.classList.add("hidden")
-  }else{
+  } else {
     gameMenu2.classList.remove("hidden")
   }
 
@@ -377,12 +377,11 @@ function showGameMenu(gameOver = 0, isHidden = 0) {
     gameOver_img.classList.remove("hidden")
     // fruit_img.classList.add("hidden")
     // ninja_img.classList.add("hidden")
-  }else {
+  } else {
     gameOver_img.classList.add("hidden")
     // fruit_img.classList.remove("hidden")
     // ninja_img.classList.remove("hidden")
   }
-
 }
 
 // Show the login form
@@ -418,9 +417,9 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       await fetchLeaderboard()
       populateLeaderboard()
       document.getElementById("login-form").classList.add("hidden") // Hide the form
-      drawLeaderboard({isHidden: 0})
-      ShowLogoutButton({isHidden: 0})
-      ShowLeaderboardButton({isHidden: 0})
+      drawLeaderboard({ isHidden: 0 })
+      ShowLogoutButton({ isHidden: 0 })
+      ShowLeaderboardButton({ isHidden: 0 })
     } else {
       alert("Login failed. Please check your credentials.")
     }
@@ -439,11 +438,11 @@ document.getElementById("logout-button").addEventListener("click", async functio
 
     if (response.ok) {
       alert("Logout successful!")
-      session = null;
+      session = null
       document.getElementById("login-form").classList.remove("hidden")
-      ShowLogoutButton({isHidden: 1})
-      ShowLeaderboardButton({isHidden: 1})
-      drawLeaderboard({isHidden: 1})
+      ShowLogoutButton({ isHidden: 1 })
+      ShowLeaderboardButton({ isHidden: 1 })
+      drawLeaderboard({ isHidden: 1 })
     } else {
       alert("Logout failed. Please try again.")
     }
@@ -559,16 +558,16 @@ function mouseDragged() {
   return false // <-- Prevents default dragging behavior
 }
 
-function ShowLogoutButton({isHidden = 0}) {
+function ShowLogoutButton({ isHidden = 0 }) {
   const logoutButton = document.getElementById("logout")
   if (isHidden) {
     logoutButton.style.display = "none"
-  }else{
+  } else {
     logoutButton.style.display = "block"
   }
 }
 
-function ShowLeaderboardButton({isHidden = 0}) {
+function ShowLeaderboardButton({ isHidden = 0 }) {
   const isMobilelandscape = window.matchMedia("(max-height: 430px)").matches
   const leaderboardButton = document.getElementById("open_dashboard")
 
@@ -576,15 +575,15 @@ function ShowLeaderboardButton({isHidden = 0}) {
     leaderboardButton.style.display = "none"
     return // Don't show leaderboard button
   }
-  
+
   if (isHidden) {
     leaderboardButton.style.display = "none"
-  }else{
+  } else {
     leaderboardButton.style.display = "block"
   }
 }
 
-function drawLeaderboard({isHidden = 0}) {
+function drawLeaderboard({ isHidden = 0 }) {
   const isMobile = window.matchMedia("(max-width: 767px)").matches
   const isPortrait = window.matchMedia("(orientation: portrait)").matches
   if (isMobile && isPortrait) return // Don't show leaderboard on mobile portrait
@@ -593,10 +592,9 @@ function drawLeaderboard({isHidden = 0}) {
 
   if (isHidden) {
     leaderboard.style.display = "none"
-  }else{
+  } else {
     leaderboard.style.display = "block"
   }
-
 }
 
 //close leaderboard button

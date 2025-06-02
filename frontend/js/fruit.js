@@ -53,7 +53,12 @@ function randomFruit(){ // Create randon fruit
 
     var x = random(width);
     var y = height;
-    var size = noise(frameCount)*20 + 40;
+    var size = noise(frameCount)*30 + 60;
+
+    if(fruitsList.length - 1 == idx){ 
+        size = noise(frameCount)*20 + 40;
+    }
+
     var col = color(random(255),random(255),random(255));
     var speed = random(3,5);
     var fruit = fruitsImgs[idx];
