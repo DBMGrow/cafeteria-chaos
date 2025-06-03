@@ -114,13 +114,13 @@ async function fetchLocationsSession() {
   }
 }
 
-// Keep the DOMContentLoaded event listener for initial population
-document.addEventListener("DOMContentLoaded", async function () {
-  await fetchLeaderboard()
-  session = await fetchLocationsSession()
+let emailInput, passwordInput, loginButton, loginMessage, session
 
-  populateLeaderboard() // Populate leaderboard on page load
-})
+async function initializeSession() {
+  await fetchLeaderboard()
+  session = await fetchLocationsSession() // Simulate fetching session data
+  populateLeaderboard()
+}
 
 async function useAddNewHighScores({ email, score }) {
   try {
@@ -139,8 +139,6 @@ async function useAddNewHighScores({ email, score }) {
   }
 }
 
-let emailInput, passwordInput, loginButton, loginMessage, session
-
 async function setup() {
   const container = document.getElementById("gameCanvas")
   const width = container.clientWidth
@@ -154,7 +152,9 @@ async function setup() {
   lives = 3
 
   masterVolume(0)
-  await fetchLeaderboard()
+
+  await initializeSession() // Initialize session data
+
   const showLogin = session
   if (!showLogin) {
     showLoginForm()
@@ -252,9 +252,11 @@ function game() {
       }
       if (sword.checkSlice(fruit[i]) && fruit[i].name != "boom") {
         // Sliced fruit
+        console.log("Sword sliced a fruit!", fruit[i]);
         spliced.play()
         points++
         fruitsSlicedPerPress++ // Increment the counter for sliced fruits
+        // fruit[i].slice(); // <-- Call the slice method here!
         fruit[i].update()
         fruit[i].draw()
       }
