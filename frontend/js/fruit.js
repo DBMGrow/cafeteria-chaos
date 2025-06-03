@@ -13,21 +13,43 @@ function Fruit(x,y,speed,color,size,fruit,slicedFruit1,slicedFruit2,name){
     this.name = name;
     this.sliced = false;
     this.visible = true;
+
+    this.slice1x = this.x - 25;
+    this.slice1y = this.y;
+    this.slice2x = this.x + 25;
+    this.slice2y = this.y;
+    this.slice1xSpeed = 0;
+    this.slice1ySpeed = 0;
+    this.slice2xSpeed = 0;
+    this.slice2ySpeed = 0;
 }
+
+Fruit.prototype.slice = function() {
+    if (this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)) {
+        console.log(this.sliced, "firstSlice")
+        this.sliced = true;
+        // Give each slice a random direction
+        this.slice1xSpeed = random(-4, -1);
+        this.slice1ySpeed = random(-8, -4);
+        this.slice2xSpeed = random(1, 4);
+        this.slice2ySpeed = random(-8, -4);
+    }
+};
 
 Fruit.prototype.draw = function(){
     fill(this.color);
-    if(this.sliced && this.name != 'boom'){ // Draw sliced fruit
-        image(this.slicedFruit1, this.x - 25, this.y, this.size, this.size);
-        image(this.slicedFruit2, this.x + 25, this.y, this.size, this.size);
+    if(this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ // Draw sliced fruit
+        // console.log(this.slice1x, this.x, "size")
+        image(this.slicedFruit2, this.x + 25, this.y, this.size + 25, this.size + 30);
+        image(this.slicedFruit1, this.x + 25, this.y, this.size + 25, this.size + 30);
     }else{ // Draw fruit
         image(this.fruit, this.x, this.y, this.size, this.size);
     }
 };
 
 Fruit.prototype.update = function(){
-    if(this.sliced && this.name != 'boom'){
-        this.x -= this.xSpeed ;
+    if(this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){
+        this.x -= this.xSpeed*2;
         this.y += this.ySpeed;
         this.ySpeed += gravity*5;
     }else{
@@ -55,7 +77,7 @@ function randomFruit(){ // Create randon fruit
     var y = height;
     var size = noise(frameCount)*30 + 60;
 
-    if(fruitsList.length - 1 == idx){ 
+    if(["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ 
         size = noise(frameCount)*20 + 40;
     }
 
