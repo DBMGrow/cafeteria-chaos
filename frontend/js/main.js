@@ -365,7 +365,7 @@ function playAgainButton() {
 function showGameMenu(gameOver = 0, isHidden = 0) {
   const gameMenu2 = document.getElementById("gameMenu")
   // const fruit_img = document.querySelector('img[alt="fruit"]');
-  // const ninja_img = document.querySelector('img[alt="ninja"]');
+  const ninja_img = document.querySelector('img[alt="cafeteria-logo"]');
   const gameOver_img = document.querySelector('img[alt="gameOver"]')
   if (isHidden) {
     gameMenu2.classList.add("hidden")
@@ -376,11 +376,11 @@ function showGameMenu(gameOver = 0, isHidden = 0) {
   if (gameOver) {
     gameOver_img.classList.remove("hidden")
     // fruit_img.classList.add("hidden")
-    // ninja_img.classList.add("hidden")
+    ninja_img.classList.add("hidden")
   } else {
     gameOver_img.classList.add("hidden")
     // fruit_img.classList.remove("hidden")
-    // ninja_img.classList.remove("hidden")
+    ninja_img.classList.remove("hidden")
   }
 }
 
@@ -501,6 +501,7 @@ playGameContainer.addEventListener("click", function (event) {
     start.play()
     score = 0
     lives = 3
+    timerValue = 60
     fruit = []
     isPlay = true
     loop()
