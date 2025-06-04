@@ -28,9 +28,10 @@
   >
     <div class="">
       <div
-        id="gameCanvas"
-        class="relative lg:w-[800px] lg:h-[635px] w-screen h-screen lg:mt-5 bg-cover bg-center bg-no-repeat rounded-lg shadow-xl shadow-xl/30 inset-shadow-sm inset-shadow-gray-500 overflow-hidden"
+      id="gameCanvas"
+      class="relative lg:w-[800px] lg:h-[635px] w-screen h-screen lg:mt-5 bg-cover bg-center bg-no-repeat rounded-lg shadow-xl shadow-xl/30 inset-shadow-sm inset-shadow-gray-500 overflow-hidden"
       >
+      <canvas id="confetti-canvas" class="absolute right-0 left-0"></canvas>
         <div id="gameMenu" class="absolute right-0 left-0 hidden">
           <div class="flex justify-center items-center gap-4 sm:mt-10">
             <!-- <img src="images/fruit.png" alt="fruit" class="lg:w-[358px] lg:h-[195px] w-[200px] h-[95px]" /> -->
@@ -40,7 +41,7 @@
           </div>
           <div id="playGameContainer" class="relative w-full lg:h-[400px] max-lg:mt-32 flex items-center justify-center">
             <img src="images/new-game.png" alt="newgame" class="playGame absolute lg:w-[200px] lg:h-[200px] w-[150px] h-[150px]" />
-            <img src="images/fruitMode.png" alt="fruitMode" class="playGame absolute lg:w-[90px] lg:h-[90px] w-[70px] h-[70px]" />
+            <img src="images/items/apple.png" alt="fruitMode" class="playGame absolute lg:w-[90px] lg:h-[90px] w-[70px] h-[70px]" />
           </div>
         </div>
         <div id="logout" class="absolute top-52 right-2 bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden">
@@ -176,6 +177,10 @@
           <!-- Rows will be inserted here by JavaScript -->
         </div>
       </div>
+      <div class="mt-2 bg-gray-900 p-2 rounded-lg">
+        <h1>Confetti Animation</h1>
+       <button id="confetti-button" class="text-white p-5 bg-red-500">Celebrate!</button>
+      </div>
     </div>
 
 
@@ -191,5 +196,6 @@
 <script src="./js/main.js"></script>
 <script src="./js/swords.js"></script>
 <script src="./js/fruit.js"></script>
+<script src="./js/confetti.js"></script>
 </body>
 </html>

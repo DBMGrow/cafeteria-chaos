@@ -68,18 +68,22 @@ function randomFruit(){ // Create randon fruit
     var idx = round(random(0,fruitsList.length-1));
 
     if (random() < bombProbability) {
-       console.log("helloo bomb")
-       // Generate a bomb (last item in fruitsList)
-       idx = fruitsList.length - 1;
+              // Generate a random bomb
+       var bombIndices = fruitsList.map((fruit, index) => 
+           ["boom1", "boom2", "boom3", "boom4", "boom5"].includes(fruit) ? index : null
+       ).filter(index => index !== null);
+       idx = bombIndices[floor(random(0, bombIndices.length))];
+
+    //    idx = fruitsList.length - 1;
      }
 
     var x = random(width);
     var y = height;
-    var size = noise(frameCount)*30 + 60;
+    var size = noise(frameCount)*20 + 40;
 
-    if(["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ 
-        size = noise(frameCount)*20 + 40;
-    }
+    // if(["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ 
+    //     size = noise(frameCount)*20 + 40;
+    // }
 
     var col = color(random(255),random(255),random(255));
     var speed = random(3,5);

@@ -53,39 +53,11 @@ function preload() {
   foregroundImg = loadImage("images/home-mask.png")
   fruitLogo = loadImage("images/fruit.png")
   ninjaLogo = loadImage("images/ninja.png")
-  scoreImg = loadImage("images/score.png")
+  scoreImg = loadImage("images/items/apple.png")
   newGameImg = loadImage("images/new-game.png")
   fruitImg = loadImage("images/fruitMode.png")
   gameOverImg = loadImage("images/game-over.png")
   leaderboardImg = loadImage("images/leaderboards.png")
-}
-
-async function fetchLeaderboard() {
-  try {
-    const response = await fetch(`http://localhost:3000/highscores`)
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const data = await response.json()
-    // updateLeaderboardUI(data)
-    leaderboardData = data
-  } catch (error) {
-    console.error("Error fetching leaderboard:", error)
-  }
-}
-
-async function fetchLeaderboard() {
-  try {
-    const response = await fetch(`/highscores`)
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    const data = await response.json()
-    // updateLeaderboardUI(data)
-    leaderboardData = data
-  } catch (error) {
-    console.error("Error fetching leaderboard:", error)
-  }
 }
 
 async function fetchLeaderboard() {
@@ -360,22 +332,22 @@ function playAgainButton() {
   ShowLeaderboardButton({ isHidden: 0 })
 
   showGameMenu(1, 0)
-  cnv.mouseClicked(() => {
-    if (
-      mouseX > 365 &&
-      mouseX < 365 + 90 && // X bounds of the fruit image
-      mouseY > 415 &&
-      mouseY < 415 + 90 // Y bounds of the fruit image
-    ) {
-      start.play()
-      score = 0
-      lives = 3
-      timerValue = 60
-      fruit = []
-      isPlay = true
-      loop()
-    }
-  })
+  // cnv.mouseClicked(() => {
+  //   if (
+  //     mouseX > 365 &&
+  //     mouseX < 365 + 90 && // X bounds of the fruit image
+  //     mouseY > 415 &&
+  //     mouseY < 415 + 90 // Y bounds of the fruit image
+  //   ) {
+  //     start.play()
+  //     score = 0
+  //     lives = 3
+  //     timerValue = 60
+  //     fruit = []
+  //     isPlay = true
+  //     loop()
+  //   }
+  // })
 }
 
 // show Game Menu
@@ -409,6 +381,10 @@ function showLoginForm() {
 }
 
 function showhighScoresForm() {
+  startConfetti();
+  
+  // Stop after 5 seconds
+  setTimeout(stopConfetti, 20000);
   const highscores = document.getElementById("high_scores")
   highscores.classList.remove("hidden")
 }
@@ -451,7 +427,7 @@ document.getElementById("logout-button").addEventListener("click", async functio
   event.preventDefault()
 
   try {
-    const response = await fetch(`http://localhost:3000/auth/logout`)
+    const response = await fetch(`/auth/logout`)
 
     if (response.ok) {
       alert("Logout successful!")
@@ -552,7 +528,7 @@ document.getElementById("resetLeaderboardForm").addEventListener("submit", async
         return
       }
 
-      const response = await fetch(`http://localhost:3000/highscores/reset`, {
+      const response = await fetch(`/highscores/reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: passwordInput }),
@@ -615,6 +591,14 @@ function drawLeaderboard({ isHidden = 0 }) {
   }
 }
 
+// document.getElementById('confetti-button').addEventListener('click', function() {
+//   // Start the confetti animation when button is clicked
+//   startConfetti();
+  
+//   // Stop after 5 seconds
+//   setTimeout(stopConfetti, 5000);
+// });
+
 //close leaderboard button
 document.getElementById("leaderboardCloseButton").addEventListener("click", function (event) {
   const leaderboard = document.getElementById("leaderboard")
@@ -657,7 +641,7 @@ function populateLeaderboard() {
           }</h1>
           <h1 class="username flex-auto text-start font-medium">${player.email}</h1>
           <div class="score flex items-center justify-between w-16 ${backgroundColor} rounded-full px-2 text-center font-bold">
-          <img src="images/score.png" alt="score" class="w-5 h-5 mr-1">
+          <img src="images/items/apple.png" alt="score" class="w-5 h-5 mr-1">
           <span class="text-white">${player.score}</span>
           </div>
       </div>
