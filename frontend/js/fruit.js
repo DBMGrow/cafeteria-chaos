@@ -26,9 +26,12 @@ function Fruit(x,y,speed,color,size,fruit,slicedFruit1,slicedFruit2,name){
 
 Fruit.prototype.slice = function() {
     if (this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)) {
-        console.log(this.sliced, "firstSlice")
         this.sliced = true;
         // Give each slice a random direction
+        this.slice1x = this.x - 25;
+        this.slice1y = this.y;
+        this.slice2x = this.x + 25;
+        this.slice2y = this.y;
         this.slice1xSpeed = random(-4, -1);
         this.slice1ySpeed = random(-8, -4);
         this.slice2xSpeed = random(1, 4);
@@ -40,8 +43,8 @@ Fruit.prototype.draw = function(){
     fill(this.color);
     if(this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ // Draw sliced fruit
         // console.log(this.slice1x, this.x, "size")
-        image(this.slicedFruit2, this.x + 25, this.y, this.size + 25, this.size + 30);
-        image(this.slicedFruit1, this.x + 25, this.y, this.size + 25, this.size + 30);
+        image(this.slicedFruit1, this.slice1x, this.slice1y, this.size + 25, this.size + 30);
+        image(this.slicedFruit2, this.slice2x, this.slice2y, this.size + 25, this.size + 30);
     }else{ // Draw fruit
         image(this.fruit, this.x, this.y, this.size, this.size);
     }
@@ -49,16 +52,26 @@ Fruit.prototype.draw = function(){
 
 Fruit.prototype.update = function(){
     if(this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){
-        this.x -= this.xSpeed*2;
-        this.y += this.ySpeed;
-        this.ySpeed += gravity*5;
+        // Move each half separately
+        this.slice1x += this.slice1xSpeed;
+        this.slice1y += this.slice1ySpeed;
+        this.slice1ySpeed += gravity * 2.5;
+
+        this.slice2x += this.slice2xSpeed;
+        this.slice2y += this.slice2ySpeed;
+        this.slice2ySpeed += gravity * 2.5;
+
+         // Hide when both halves are off screen
+        if(this.slice1y > height && this.slice2y > height){
+            this.visible = false;
+        }
     }else{
         this.x += this.xSpeed;
         this.y += this.ySpeed;
         this.ySpeed += gravity;
-    }
-    if(this.y > height){
-        this.visible = false;
+        if(this.y > height){
+            this.visible = false;
+        }
     }
 };
 
