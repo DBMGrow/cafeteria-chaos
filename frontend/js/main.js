@@ -591,14 +591,6 @@ function drawLeaderboard({ isHidden = 0 }) {
   }
 }
 
-// document.getElementById('confetti-button').addEventListener('click', function() {
-//   // Start the confetti animation when button is clicked
-//   startConfetti();
-  
-//   // Stop after 5 seconds
-//   setTimeout(stopConfetti, 5000);
-// });
-
 //close leaderboard button
 document.getElementById("leaderboardCloseButton").addEventListener("click", function (event) {
   const leaderboard = document.getElementById("leaderboard")
