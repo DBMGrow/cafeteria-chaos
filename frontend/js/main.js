@@ -278,7 +278,7 @@ function drawScore() {
   image(this.scoreImg, 10, 10, responsiveImageSize, responsiveImageSize)
   textAlign(LEFT)
   noStroke()
-  fill(255, 0, 0) // Set text color to red
+  fill(200, 0, 0) // Set text color to a darker red
   textSize(responsiveTextSize * 1.2) // Increase text size slightly
   textFont("sans-serif") // Change font to sans-serif
   textStyle(BOLD) // Make the font bold
@@ -289,7 +289,7 @@ function drawScore() {
 function drawTimer() {
   textAlign(CENTER)
   noStroke()
-  fill(255, 0, 0)
+  fill(200, 0, 0)
   textFont("sans-serif")
   textStyle(BOLD) // Make the font bold
   const responsiveTextSize = Math.min(width, height) * 0.05 // Adjust text size based on canvas dimensions
