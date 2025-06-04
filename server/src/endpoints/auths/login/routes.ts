@@ -1,6 +1,6 @@
 import { db } from "../../../lib/database"
 import CodedError from "../../../lib/CodedError"
-import Router from "@/lib/router"
+import Router from "../../../lib/router"
 
 const loginRouter = new Router()
 
