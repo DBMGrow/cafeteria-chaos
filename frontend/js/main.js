@@ -275,15 +275,14 @@ function mouseReleased() {
 function drawScore() {
   const responsiveImageSize = Math.min(width, height) * 0.07 // Adjust image size based on canvas dimensions
   const responsiveTextSize = Math.min(width, height) * 0.07 // Adjust text size based on canvas dimensions
-
   image(this.scoreImg, 10, 10, responsiveImageSize, responsiveImageSize)
   textAlign(LEFT)
   noStroke()
   fill(255, 0, 0) // Set text color to red
-  textSize(responsiveTextSize)
-  textFont("Orbitron")
+  textSize(responsiveTextSize * 1.2) // Increase text size slightly
+  textFont("sans-serif") // Change font to sans-serif
   textStyle(BOLD) // Make the font bold
-  text(score, 10 + responsiveImageSize + 5, 7 + responsiveTextSize) // Position text next to the image
+  text(score, 10 + responsiveImageSize + 5, 7 + responsiveTextSize) // Adjust position for the increased size
 }
 
 // Function to draw the timer on the screen
@@ -291,10 +290,10 @@ function drawTimer() {
   textAlign(CENTER)
   noStroke()
   fill(255, 0, 0)
-  textFont("Orbitron")
+  textFont("sans-serif")
   textStyle(BOLD) // Make the font bold
   const responsiveTextSize = Math.min(width, height) * 0.05 // Adjust text size based on canvas dimensions
-  textSize(responsiveTextSize)
+  textSize(responsiveTextSize * 1.2)
   text(`Time: ${timerValue}`, width / 2, responsiveTextSize + 10) // Position text slightly below the top
 }
 
