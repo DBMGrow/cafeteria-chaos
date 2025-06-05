@@ -25,7 +25,7 @@ function Fruit(x,y,speed,color,size,fruit,slicedFruit1,slicedFruit2,name){
 }
 
 Fruit.prototype.slice = function() {
-    if (this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)) {
+    if (this.sliced && !["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)) {
         this.sliced = true;
         // Give each slice a random direction
         this.slice1x = this.x - 25;
@@ -41,7 +41,7 @@ Fruit.prototype.slice = function() {
 
 Fruit.prototype.draw = function(){
     fill(this.color);
-    if(this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ // Draw sliced fruit
+    if(this.sliced && !["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ // Draw sliced fruit
         // console.log(this.slice1x, this.x, "size")
         image(this.slicedFruit1, this.slice1x, this.slice1y, this.size + 25, this.size + 30);
         image(this.slicedFruit2, this.slice2x, this.slice2y, this.size + 25, this.size + 30);
@@ -51,7 +51,7 @@ Fruit.prototype.draw = function(){
 };
 
 Fruit.prototype.update = function(){
-    if(this.sliced && !["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){
+    if(this.sliced && !["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){
         // Move each half separately
         this.slice1x += this.slice1xSpeed;
         this.slice1y += this.slice1ySpeed;
@@ -83,7 +83,7 @@ function randomFruit(){ // Create randon fruit
     if (random() < bombProbability) {
               // Generate a random bomb
        var bombIndices = fruitsList.map((fruit, index) => 
-           ["boom1", "boom2", "boom3", "boom4", "boom5"].includes(fruit) ? index : null
+           ["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"].includes(fruit) ? index : null
        ).filter(index => index !== null);
        idx = bombIndices[floor(random(0, bombIndices.length))];
 
@@ -94,7 +94,7 @@ function randomFruit(){ // Create randon fruit
     var y = height;
     var size = noise(frameCount)*20 + 40;
 
-    // if(["boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ 
+    // if(["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ 
     //     size = noise(frameCount)*20 + 40;
     // }
 

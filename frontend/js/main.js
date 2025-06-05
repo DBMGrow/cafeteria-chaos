@@ -8,7 +8,7 @@ var isPlay = false
 var gravity = 0.1
 var sword
 var fruit = []
-const bombitem = ["boom1", "boom2", "boom3", "boom4", "boom5"]
+const bombitem = ["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"]
 var fruitsList = ["apple", "chicken-nugget", "chocolate-milk", "cookie", "sandwich", ...bombitem]
 var fruitsImgs = [],
   slicedFruitsImgs = []
@@ -44,10 +44,10 @@ function preload() {
     fruitsImgs[i] = loadImage("images/items/" + fruitsList[i] + ".png")
   }
   for (var i = 0; i < 3; i++) {
-    livesImgs[i] = loadImage("images/x" + (i + 1) + ".png")
+    livesImgs[i] = loadImage("images/items/x" + (i + 1) + ".png")
   }
   for (var i = 0; i < 3; i++) {
-    livesImgs2[i] = loadImage("images/xx" + (i + 1) + ".png")
+    livesImgs2[i] = loadImage("images/items/xx" + (i + 1) + ".png")
   }
   bg = loadImage("images/background/cafeteria-backgroundv1.png")
   foregroundImg = loadImage("images/home-mask.png")
@@ -225,7 +225,6 @@ function game() {
       }
       if (sword.checkSlice(fruit[i]) && !bombitem.includes(fruit[i].name)) {
         // Sliced fruit
-        // console.log("Sword sliced a fruit!", fruit[i])
         spliced.play()
         points++
         fruitsSlicedPerPress++ // Increment the counter for sliced fruits
@@ -250,17 +249,21 @@ function game() {
 }
 
 function drawLives() {
-  image(this.livesImgs[0], width - 110, 20, livesImgs[0].width, livesImgs[0].height)
-  image(this.livesImgs[1], width - 88, 20, livesImgs[1].width, livesImgs[1].height)
-  image(this.livesImgs[2], width - 60, 20, livesImgs[2].width, livesImgs[2].height)
+  const responsiveHeight = Math.min(width, height) * 0.07; // Adjust height based on canvas dimensions
+  const aspectRatio = livesImgs[0].width / livesImgs[0].height; // Maintain aspect ratio
+
+  image(this.livesImgs[0], width - 110, 15, responsiveHeight * aspectRatio, responsiveHeight);
+  image(this.livesImgs[1], width - 88, 15, responsiveHeight * aspectRatio, responsiveHeight);
+  image(this.livesImgs[2], width - 60, 15, responsiveHeight * aspectRatio, responsiveHeight);
+
   if (lives <= 2) {
-    image(this.livesImgs2[0], width - 110, 20, livesImgs2[0].width, livesImgs2[0].height)
+    image(this.livesImgs2[0], width - 110, 15, responsiveHeight * aspectRatio, responsiveHeight);
   }
   if (lives <= 1) {
-    image(this.livesImgs2[1], width - 88, 20, livesImgs2[1].width, livesImgs2[1].height)
+    image(this.livesImgs2[1], width - 88, 15, responsiveHeight * aspectRatio, responsiveHeight);
   }
   if (lives === 0) {
-    image(this.livesImgs2[2], width - 60, 20, livesImgs2[2].width, livesImgs2[2].height)
+    image(this.livesImgs2[2], width - 60, 15, responsiveHeight * aspectRatio, responsiveHeight);
   }
 }
 
