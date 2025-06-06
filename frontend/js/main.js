@@ -9,7 +9,19 @@ var gravity = 0.1
 var sword
 var fruit = []
 const bombitem = ["preprite1"]
-var fruitsList = ["apple", "chicken-nugget", "chocolate-milk", "cookie", "sandwich", "apple", "chicken-nugget", "chocolate-milk", "cookie", "sandwich", ...bombitem]
+var fruitsList = [
+  "apple",
+  "chicken-nugget",
+  "chocolate-milk",
+  "cookie",
+  "sandwich",
+  "apple",
+  "chicken-nugget",
+  "chocolate-milk",
+  "cookie",
+  "sandwich",
+  ...bombitem,
+]
 var fruitsImgs = [],
   slicedFruitsImgs = []
 var livesImgs = [],
@@ -144,6 +156,18 @@ function draw() {
   showGameMenu(0, 0)
 
   cnv.mouseClicked(check)
+  
+  console.log({isPlay})
+  // Always allow sword swipe and draw
+  if (!isPlay && mouseIsPressed) {
+    console.log("Hwello")
+    sword.swipe(mouseX, mouseY)
+    sword.draw()
+    if (frameCount % 2 === 0) {
+      sword.update()
+    }
+  }
+
   if (isPlay) {
     game()
   }
@@ -221,7 +245,7 @@ function game() {
         spliced.play()
         points++
         fruitsSlicedPerPress++ // Increment the counter for sliced fruits
-        fruit[i].slice(); // <-- Call the slice method here!
+        fruit[i].slice() // <-- Call the slice method here!
         fruit[i].update()
         fruit[i].draw()
       }
@@ -242,21 +266,21 @@ function game() {
 }
 
 function drawLives() {
-  const responsiveHeight = Math.min(width, height) * 0.07; // Adjust height based on canvas dimensions
-  const aspectRatio = livesImgs[0].width / livesImgs[0].height; // Maintain aspect ratio
+  const responsiveHeight = Math.min(width, height) * 0.07 // Adjust height based on canvas dimensions
+  const aspectRatio = livesImgs[0].width / livesImgs[0].height // Maintain aspect ratio
 
-  image(this.livesImgs[0], width - 110, 15, responsiveHeight * aspectRatio, responsiveHeight);
-  image(this.livesImgs[1], width - 88, 15, responsiveHeight * aspectRatio, responsiveHeight);
-  image(this.livesImgs[2], width - 60, 15, responsiveHeight * aspectRatio, responsiveHeight);
+  image(this.livesImgs[0], width - 110, 15, responsiveHeight * aspectRatio, responsiveHeight)
+  image(this.livesImgs[1], width - 88, 15, responsiveHeight * aspectRatio, responsiveHeight)
+  image(this.livesImgs[2], width - 60, 15, responsiveHeight * aspectRatio, responsiveHeight)
 
   if (lives <= 2) {
-    image(this.livesImgs2[0], width - 110, 15, responsiveHeight * aspectRatio, responsiveHeight);
+    image(this.livesImgs2[0], width - 110, 15, responsiveHeight * aspectRatio, responsiveHeight)
   }
   if (lives <= 1) {
-    image(this.livesImgs2[1], width - 88, 15, responsiveHeight * aspectRatio, responsiveHeight);
+    image(this.livesImgs2[1], width - 88, 15, responsiveHeight * aspectRatio, responsiveHeight)
   }
   if (lives === 0) {
-    image(this.livesImgs2[2], width - 60, 15, responsiveHeight * aspectRatio, responsiveHeight);
+    image(this.livesImgs2[2], width - 60, 15, responsiveHeight * aspectRatio, responsiveHeight)
   }
 }
 
@@ -299,6 +323,7 @@ function gameOver() {
   clear()
   background(bg)
   lives = 0
+  isPlay = false
 
   // Check if leaderboardData is empty
   if (leaderboardData.length === 0 || leaderboardData.length < 10) {
@@ -377,9 +402,9 @@ function showLoginForm() {
 
 function showhighScoresForm() {
   startConfetti();
-  
+
   // Stop after 5 seconds
-  setTimeout(stopConfetti, 20000);
+  setTimeout(stopConfetti, 20000)
   const highscores = document.getElementById("high_scores")
   highscores.classList.remove("hidden")
 }
