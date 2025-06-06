@@ -8,8 +8,8 @@ var isPlay = false
 var gravity = 0.1
 var sword
 var fruit = []
-const bombitem = ["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"]
-var fruitsList = ["apple", "chicken-nugget", "chocolate-milk", "cookie", "sandwich", ...bombitem]
+const bombitem = ["preprite1"]
+var fruitsList = ["apple", "chicken-nugget", "chocolate-milk", "cookie", "sandwich", "apple", "chicken-nugget", "chocolate-milk", "cookie", "sandwich", ...bombitem]
 var fruitsImgs = [],
   slicedFruitsImgs = []
 var livesImgs = [],
