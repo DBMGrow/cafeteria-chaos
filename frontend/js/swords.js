@@ -39,10 +39,11 @@ Sword.prototype.checkSlice = function(fruit){
     var length = this.swipes.length;
     var stroke1 = this.swipes[length - 1]; // latest stroke
 	var stroke2 = this.swipes[length - 2]; // second last stroke
-    var d1 = dist(stroke1.x, stroke1.y, fruit.x, fruit.y); // distance between stroke1 and fruit
-    var d2 = dist(stroke2.x, stroke2.y, fruit.x, fruit.y); // distance between stroke2 and fruit
+    var d1 = dist(stroke1.x, stroke1.y, fruit.x + 40, fruit.y); // distance between stroke1 and fruit
+    var d2 = dist(stroke2.x, stroke2.y, fruit.x, fruit.y + 50); // distance between stroke2 and fruit
     var d3 = dist(stroke1.x, stroke1.y, stroke2.x, stroke2.y); // distance between stroke1 and stroke2
     var sliced = (d1 < fruit.size) || ((d1 < d3 && d2 < d3) && (d3 < width/4));
+
     fruit.sliced = sliced;
     return sliced;
     

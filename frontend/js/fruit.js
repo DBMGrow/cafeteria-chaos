@@ -94,10 +94,6 @@ function randomFruit(){ // Create randon fruit
     var y = height;
     var size = noise(frameCount)*20 + 40;
 
-    // if(["preprite1","boom1", "boom2", "boom3", "boom4", "boom5"].includes(this.name)){ 
-    //     size = noise(frameCount)*20 + 40;
-    // }
-
     var col = color(random(255),random(255),random(255));
     var speed = random(3,5);
     var fruit = fruitsImgs[idx];
