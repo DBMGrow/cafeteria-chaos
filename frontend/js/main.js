@@ -37,21 +37,20 @@ function preload() {
 
   // LOAD IMAGES
   for (var i = 0; i < fruitsList.length - bombitem.length; i++) {
-    slicedFruitsImgs[2 * i] = loadImage("images/items/" + fruitsList[i] + "-1.png")
-    slicedFruitsImgs[2 * i + 1] = loadImage("images/items/" + fruitsList[i] + "-2.png")
+    slicedFruitsImgs[2 * i] = loadImage("images/" + fruitsList[i] + "-1.png")
+    slicedFruitsImgs[2 * i + 1] = loadImage("images/" + fruitsList[i] + "-2.png")
   }
   for (var i = 0; i < fruitsList.length; i++) {
-    fruitsImgs[i] = loadImage("images/items/" + fruitsList[i] + ".png")
+    fruitsImgs[i] = loadImage("images/" + fruitsList[i] + ".png")
   }
   for (var i = 0; i < 3; i++) {
-    livesImgs[i] = loadImage("images/items/x" + (i + 1) + ".png")
+    livesImgs[i] = loadImage("images/x" + (i + 1) + ".png")
   }
   for (var i = 0; i < 3; i++) {
-    livesImgs2[i] = loadImage("images/items/xx" + (i + 1) + ".png")
+    livesImgs2[i] = loadImage("images/xx" + (i + 1) + ".png")
   }
-  bg = loadImage("images/background/cafeteria-backgroundv1.png")
-  scoreImg = loadImage("images/items/apple.png")
-  leaderboardImg = loadImage("images/leaderboards.png")
+  bg = loadImage("images/cafeteria-backgroundv1.png")
+  scoreImg = loadImage("images/apple.png")
 }
 
 async function fetchLeaderboard() {
@@ -629,7 +628,7 @@ function populateLeaderboard() {
           }</h1>
           <h1 class="username flex-auto text-start font-medium">${player.email}</h1>
           <div class="score flex items-center justify-between w-16 ${backgroundColor} rounded-full px-2 text-center font-bold">
-          <img src="images/items/apple.png" alt="score" class="w-5 h-5 mr-1">
+          <img src="images/apple.png" alt="score" class="w-5 h-5 mr-1">
           <span class="text-white">${player.score}</span>
           </div>
       </div>
