@@ -50,13 +50,7 @@ function preload() {
     livesImgs2[i] = loadImage("images/items/xx" + (i + 1) + ".png")
   }
   bg = loadImage("images/background/cafeteria-backgroundv1.png")
-  foregroundImg = loadImage("images/home-mask.png")
-  fruitLogo = loadImage("images/fruit.png")
-  ninjaLogo = loadImage("images/ninja.png")
   scoreImg = loadImage("images/items/apple.png")
-  newGameImg = loadImage("images/new-game.png")
-  fruitImg = loadImage("images/fruitMode.png")
-  gameOverImg = loadImage("images/game-over.png")
   leaderboardImg = loadImage("images/leaderboards.png")
 }
 
