@@ -31,22 +31,39 @@ Sword.prototype.update = function(){
     }
 };
 
-Sword.prototype.checkSlice = function(fruit){
+Sword.prototype.checkSlice = function (fruit) {
+   // already sliced or not enough swipe data?
+   if (fruit.sliced || this.swipes.length < 2) return false;
 
-    if(fruit.sliced || this.swipes.length < 2){
-        return false;
-    }
-    var length = this.swipes.length;
-    var stroke1 = this.swipes[length - 1]; // latest stroke
-	var stroke2 = this.swipes[length - 2]; // second last stroke
-    var d1 = dist(stroke1.x, stroke1.y, fruit.x + 40, fruit.y); // distance between stroke1 and fruit
-    var d2 = dist(stroke2.x, stroke2.y, fruit.x, fruit.y + 50); // distance between stroke2 and fruit
-    var d3 = dist(stroke1.x, stroke1.y, stroke2.x, stroke2.y); // distance between stroke1 and stroke2
-    var sliced = (d1 < fruit.size) || ((d1 < d3 && d2 < d3) && (d3 < width/4));
-
-    fruit.sliced = sliced;
-    return sliced;
-    
+   // last two swipe points  (segment P1-P2)
+   var p2 = this.swipes[this.swipes.length - 1];
+   var p1 = this.swipes[this.swipes.length - 2];
+ 
+   // vector P1 → P2
+   var vx = p2.x - p1.x;
+   var vy = p2.y - p1.y;
+   var lenSq = vx * vx + vy * vy;
+   if (lenSq === 0) return false;          // identical points → no segment
+ 
+   // project fruit centre F onto the segment, clamped to [0,1]
+   var fx = fruit.x;                       // fruit centre
+   var fy = fruit.y;
+   var t = ((fx - p1.x) * vx + (fy - p1.y) * vy) / lenSq;
+   t = constrain(t, 0, 1);                 // p5.js helper
+ 
+   // closest point C on the segment
+   var cx = p1.x + t * vx;
+   var cy = p1.y + t * vy;
+ 
+   // distance FC
+   var d = dist(fx, fy, cx, cy);
+ 
+   // slice if segment passes inside the fruit’s radius (+ a tiny buffer)
+   var buffer = 10;                         // feel-free tweak (pixels)
+   var sliced = d <= fruit.size * 0.5 + buffer;
+ 
+   fruit.sliced = sliced;
+   return sliced;
 };
 
 Sword.prototype.swipe = function(x,y){ // sword
