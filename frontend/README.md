@@ -28,7 +28,9 @@ To start playing:
 - [x] Add sounds
 - [x] Fix bugs
 - [ ] Add modes
-- [ ] Mobile friendly
+- [x] Mobile friendly
+- [ ] Ensure images are rendered directly within the canvas instead of being HTML elements.
+- [ ] Make the sword slicing functionality work consistently, even when the game is not actively running.
 
 
 ## ABOUT p5js :speech_balloon:

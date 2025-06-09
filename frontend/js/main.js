@@ -5,6 +5,7 @@ var score,
 var lives,
   x = 0
 var isPlay = false
+var isGameOver = false
 var gravity = 0.1
 var sword
 var fruit = []
@@ -62,6 +63,7 @@ function preload() {
     livesImgs2[i] = loadImage("images/xx" + (i + 1) + ".png")
   }
   bg = loadImage("images/cafeteria-backgroundv1.png")
+  playButtonImg = loadImage('images/new-game.png');
   scoreImg = loadImage("images/apple.png")
 }
 
@@ -153,7 +155,11 @@ window.addEventListener("resize", () => {
 function draw() {
   clear()
   background(bg)
-  showGameMenu(0, 0)
+  if (isGameOver) {
+    showGameMenu(1, 0)
+  } else {
+    showGameMenu(0, 0)
+  }
 
   cnv.mouseClicked(check)
   
@@ -318,12 +324,13 @@ function drawTimer() {
 }
 
 function gameOver() {
-  noLoop()
+  // noLoop()
   over.play()
   clear()
   background(bg)
   lives = 0
   isPlay = false
+  isGameOver = true
 
   // Check if leaderboardData is empty
   if (leaderboardData.length === 0 || leaderboardData.length < 10) {
@@ -369,6 +376,7 @@ function playAgainButton() {
   //   }
   // })
 }
+
 
 // show Game Menu
 function showGameMenu(gameOver = 0, isHidden = 0) {
