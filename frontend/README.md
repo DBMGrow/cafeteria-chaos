@@ -31,7 +31,11 @@ To start playing:
 - [x] Mobile friendly
 - [ ] Ensure images are rendered directly within the canvas instead of being HTML elements.
 - [ ] Make the sword slicing functionality work consistently, even when the game is not actively running.
-
+- [ ] Fix game so it works on mobile devices (test on phone).
+- [ ] Change `<title>` to "Cafeteria Chaos" and update the favicon.
+- [ ] Add a pop-up at the end of the game to collect name and email for YETI giveaway (with "Enter" and "Skip" options, YETI image, and thank you message).
+- [ ] Save pop-up information and submit it into the top ten at the same time.
+- [ ] Gradually increase the number of items on screen as the game approaches the end, instead of a sudden increases.
 
 ## ABOUT p5js :speech_balloon:
 
