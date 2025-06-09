@@ -47,17 +47,16 @@ highscoresRouter.post("/reset", {}, async (req, res) => {
 highscoresRouter.post("/", {}, async (req, res) => {
   try {
     const session = await req.getSession()
-    const { email, score } = req.body
+    const { email, name ,score } = req.body
     const emailExist = await db.selectFrom("Highscores").where("email", "=", email).selectAll().executeTakeFirst()
 
     if (emailExist?.email) {
-      await db.updateTable("Highscores").set({ score }).where("email", "=", email).execute()
+      await db.updateTable("Highscores").set({ score, name }).where("email", "=", email).execute()
       return res.status(200).success({ success: true, message: "Highscore updated successfully" })
     }
 
     const body = {
-      email,
-      score,
+      ...req.body,
       location_id: session.location_id,
     }
 

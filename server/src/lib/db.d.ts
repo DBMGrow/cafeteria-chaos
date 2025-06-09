@@ -9,6 +9,7 @@ export interface Highscores {
   email: string;
   highscore_id: Generated<number>;
   location_id: number;
+  name: string;
   score: number;
   updated_at: Generated<Date | null>;
 }
