@@ -203,10 +203,10 @@ function game() {
 
     sword.swipe(mouseX, mouseY)
   }
-  let fruitIncraeseRate = 7
+  let fruitIncraeseRate = 6
 
   if (timerValue < 30) {
-    fruitIncraeseRate = 5
+    fruitIncraeseRate = 4.5
   }
   if (timerValue < 20) {
     fruitIncraeseRate = 4

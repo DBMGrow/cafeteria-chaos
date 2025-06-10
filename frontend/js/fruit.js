@@ -77,7 +77,7 @@ Fruit.prototype.update = function(){
 
 // Original randomFruit function - now replaced with version in main.js
 function randomFruit(){ // Create randon fruit
-    var bombProbability = 0.3
+    var bombProbability = 0.2
     var idx = round(random(0,fruitsList.length-1));
 
     if (random() < bombProbability) {
