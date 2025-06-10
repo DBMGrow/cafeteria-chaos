@@ -39,6 +39,7 @@ let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
 const playGameContainer = document.getElementById("playGameContainer")
 const logoutButtonBody = document.getElementById("logout")
 const openDashboardButton = document.getElementById("open_dashboard")
+const fullscreenButton = document.getElementById("fullscreen-button");
 
 function preload() {
   // LOAD SOUNDS
@@ -589,16 +590,20 @@ function ShowLogoutButton({ isHidden = 0 }) {
 function ShowLeaderboardButton({ isHidden = 0 }) {
   const isMobilelandscape = window.matchMedia("(max-height: 430px)").matches
   const leaderboardButton = document.getElementById("open_dashboard")
+  
 
   if (!isMobilelandscape) {
     leaderboardButton.style.display = "none"
+    fullscreenButton.style.display = "none";
     return // Don't show leaderboard button
   }
 
   if (isHidden) {
     leaderboardButton.style.display = "none"
+    fullscreenButton.style.display = "none";
   } else {
     leaderboardButton.style.display = "block"
+    fullscreenButton.style.display = "block";
   }
 }
 
@@ -686,12 +691,10 @@ function checkOrientation() {
     overlay.classList.add("flex")
     document.body.style.overflow = "hidden"
     document.getElementById("leaderboard").style.display = "none"
-    // openDashboardButton.style.display = "block"
   } else {
     overlay.classList.add("hidden")
     overlay.classList.remove("flex")
     document.body.style.overflow = ""
-    // openDashboardButton.style.display = "none"
     if (session) {
       document.getElementById("leaderboard").style.display = "block"
     }
@@ -701,6 +704,26 @@ function checkOrientation() {
 window.addEventListener("resize", checkOrientation)
 window.addEventListener("orientationchange", checkOrientation)
 window.addEventListener("DOMContentLoaded", checkOrientation)
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const mainBodyContainer = document.getElementById("mainBodyContainer");
+
+  fullscreenButton.addEventListener("click", () => {
+    if (!document.fullscreenElement) {
+      // Enter fullscreen mode
+      if (mainBodyContainer.requestFullscreen) {
+        mainBodyContainer.requestFullscreen();
+      }
+    } else {
+      // Exit fullscreen mode
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  });
+
+});
 
 // function randomFruit(){
 //   // Use this modified version to increase bomb frequency

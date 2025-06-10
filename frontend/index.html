@@ -33,14 +33,17 @@
   </head>
 
   <body
+  id="mainBodyContainer"
     class="flex flex-col lg:pt-8 items-center justify-start min-h-screen bg-cover bg-center bg-no-repeat backdrop-blur-sm"
   >
+
     <div class="">
       <div
       id="gameCanvas"
       class="relative lg:w-[800px] lg:h-[635px] w-screen h-screen lg:mt-5 bg-cover bg-center bg-no-repeat rounded-lg shadow-xl shadow-xl/30 inset-shadow-sm inset-shadow-gray-500 overflow-hidden"
       >
       <canvas id="confetti-canvas" class="absolute right-0 left-0"></canvas>
+      
         <div id="gameMenu" class="absolute right-0 left-0 hidden">
           <div class="flex justify-center items-center gap-4 sm:mt-10">
             <img src="images/cafeteria-logo.png" alt="cafeteria-logo" draggable="false" class="lg:w-[500px] lg:h-[165px] w-[318px] h-[90px] mt-5" />
@@ -50,17 +53,26 @@
             <img src="images/new-game.png" draggable="false" alt="newgame" class="playGame absolute lg:size-44 size-24 cursor-pointer" />
           </div>
         </div>
-        <div id="logout" class="absolute top-52 right-2 bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden">
-          <button id="logout-button" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 w-20">Logout</button>
-        </div>
-        <div
-          id="open_dashboard"
-          class="absolute bottom-5 right-2 bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden"
-        >
+
+        <div class="absolute top-44 right-2 flex flex-col gap-2">
+          <div id="logout" class="bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden">
+            <button id="logout-button" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 w-20">Logout</button>
+          </div>
+          <div id="open_dashboard"
+          class="bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden"
+          >
           <button id="leaderboardOpenButton" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 w-20">
             Leaderboard
           </button>
         </div>
+        </div>
+
+          <button id="fullscreen-button" class="absolute top-2 right-2 bg-gradient-to-b from-orange-200 to-orange-400 py-2 px-3 rounded-xl hidden">
+            <div class="bg-orange-500 text-white flex p-2 rounded-lg hover:bg-orange-600">
+              <img src="images/fullscreen.png" alt="fullscreen" class="w-5 h-5" />
+            </div>
+          </button>
+
         <div id="rotate-portrait-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50 hidden">
           <!-- <img src="images/rotate-phone.png" alt="Rotate Device" class="w-24 mb-4" /> -->
           <p class="text-white text-xl font-bold">Please rotate your device to <span class="text-yellow-300">landscape</span> mode</p>
@@ -111,13 +123,13 @@
           <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
           <h1 class="relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">New High Score!</h1>
         </div>
-        <form id="highScoresForm" class="md:space-y-4 space-y-2">
-          <div class="flex md:flex-col items-center">
+        <form id="highScoresForm" class="lg:space-y-4 space-y-2">
+          <div class="flex lg:flex-col items-center">
             <div class="group relative">
               <img src="images/yeti-bottle1.png" alt="High Score" class="lg:w-48 w-52 block group-hover:hidden" />
               <img src="images/yeti-bottle2.png" alt="High Score" class="lg:w-48 w-52 hidden group-hover:block" />
             </div>
-            <p class="text-sm text-gray-700 font-medium max-md:text-start">Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.</p>
+            <p class="text-sm text-gray-700 font-medium max-lg:text-start">Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.</p>
           </div>
           <input
             type="text"
@@ -140,6 +152,7 @@
         </form>  
   </div>
       </div>
+
     </div>
 
     <!-- <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20"></div> -->
@@ -169,6 +182,7 @@
         </div>
       </form>
     </div>
+
   <div
       id="leaderboard"
       class="absolute space-y-3 lg:w-96 w-full bottom-2 left-2 max-lg:left-1/2 max-lg:transform max-lg:-translate-x-1/2 bg-gradient-to-b from-orange-200 to-orange-300 rounded-3xl p-3 shadow-xl hidden"
