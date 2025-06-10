@@ -63,7 +63,7 @@ function preload() {
     livesImgs2[i] = loadImage("images/xx" + (i + 1) + ".png")
   }
   bg = loadImage("images/cafeteria-backgroundv1.png")
-  playButtonImg = loadImage('images/new-game.png');
+  playButtonImg = loadImage("images/new-game.png")
   scoreImg = loadImage("images/apple.png")
 }
 
@@ -162,11 +162,9 @@ function draw() {
   }
 
   cnv.mouseClicked(check)
-  
-  console.log({isPlay})
+
   // Always allow sword swipe and draw
   if (!isPlay && mouseIsPressed) {
-    console.log("Hwello")
     sword.swipe(mouseX, mouseY)
     sword.draw()
     if (frameCount % 2 === 0) {
@@ -205,20 +203,19 @@ function game() {
 
     sword.swipe(mouseX, mouseY)
   }
+  let fruitIncraeseRate = 7
 
-  if (frameCount % 5 === 0) {
+  if (timerValue < 30) {
+    fruitIncraeseRate = 5
+  }
+  if (timerValue < 20) {
+    fruitIncraeseRate = 4
+  }
+  
+  console.log("Current frame count:", frameCount % 5, noise(frameCount))
+  if (frameCount % fruitIncraeseRate === 0) {
     if (noise(frameCount) > 0.69) {
       fruit.push(randomFruit()) // Display new fruit
-    }
-    if (timerValue < 30) {
-      if (noise(frameCount) > 0.69) {
-        fruit.push(randomFruit())
-      }
-    }
-    if (timerValue < 20) {
-      if (noise(frameCount) > 0.69) {
-        fruit.push(randomFruit())
-      }
     }
   }
 
@@ -377,7 +374,6 @@ function playAgainButton() {
   // })
 }
 
-
 // show Game Menu
 function showGameMenu(gameOver = 0, isHidden = 0) {
   const gameMenu2 = document.getElementById("gameMenu")
@@ -409,7 +405,7 @@ function showLoginForm() {
 }
 
 function showhighScoresForm() {
-  startConfetti();
+  startConfetti()
 
   // Stop after 5 seconds
   setTimeout(stopConfetti, 20000)
