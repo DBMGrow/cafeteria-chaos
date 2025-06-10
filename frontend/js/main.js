@@ -474,6 +474,7 @@ document.getElementById("highScoresForm").addEventListener("submit", async funct
   event.preventDefault()
 
   const email = event.target.querySelector("#email").value
+  const name = event.target.querySelector("#name").value
   const clickedButton = event.submitter
   console.log(`Button pressed: ${clickedButton.id}`) // Log the button's id
 
@@ -494,7 +495,7 @@ document.getElementById("highScoresForm").addEventListener("submit", async funct
       const response = await fetch(`/highscores`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, score }),
+        body: JSON.stringify({ email, score, name }),
       })
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
