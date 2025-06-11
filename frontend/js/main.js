@@ -690,7 +690,7 @@ function checkOrientation() {
     overlay.classList.remove("hidden")
     overlay.classList.add("flex")
     document.body.style.overflow = "hidden"
-    document.getElementById("leaderboard").style.display = "none"
+    document.getElementById("leaderboard").style.display = "none" 
   } else {
     overlay.classList.add("hidden")
     overlay.classList.remove("flex")
@@ -709,21 +709,30 @@ window.addEventListener("DOMContentLoaded", checkOrientation)
 document.addEventListener("DOMContentLoaded", () => {
   const mainBodyContainer = document.getElementById("mainBodyContainer");
 
-  fullscreenButton.addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      // Enter fullscreen mode
-      if (mainBodyContainer.requestFullscreen) {
-        mainBodyContainer.requestFullscreen();
+    fullscreenButton.addEventListener("click", () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (mainBodyContainer.requestFullscreen) {
+          mainBodyContainer.requestFullscreen();
+        } else if (mainBodyContainer.webkitRequestFullscreen) {
+          mainBodyContainer.webkitRequestFullscreen(); // Safari
+        }
+      } else {
+        // Exit fullscreen mode
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen(); // Safari
+        }
       }
-    } else {
-      // Exit fullscreen mode
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
+    });
   });
 
-});
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      window.scrollTo(0, 1); // Scroll to hide the address bar
+    }, 100);
+  });
+
 
 // function randomFruit(){
 //   // Use this modified version to increase bomb frequency
