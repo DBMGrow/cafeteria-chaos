@@ -25,7 +25,8 @@ function Fruit(x,y,speed,color,size,fruit,slicedFruit1,slicedFruit2,name){
 }
 
 Fruit.prototype.slice = function() {
-    if (this.sliced && !["preprite1"].includes(this.name)) {
+    // console.log("draw slice", this.name, this.sliced);
+    if (this.sliced) {
         this.sliced = true;
         // Give each slice a random direction
         this.slice1x = this.x - 25;
@@ -41,7 +42,8 @@ Fruit.prototype.slice = function() {
 
 Fruit.prototype.draw = function(){
     fill(this.color);
-    if(this.sliced && !["preprite1"].includes(this.name)){ // Draw sliced fruit
+    if(this.sliced){ // Draw sliced fruit
+        // console.log("draw fruit", this.name, this.sliced);
         // console.log(this.slice1x, this.x, "size")
         image(this.slicedFruit1, this.slice1x, this.slice1y, this.size + 25, this.size + 30);
         image(this.slicedFruit2, this.slice2x, this.slice2y, this.size + 25, this.size + 30);
@@ -51,7 +53,8 @@ Fruit.prototype.draw = function(){
 };
 
 Fruit.prototype.update = function(){
-    if(this.sliced && !["preprite1"].includes(this.name)){
+    if(this.sliced){
+        // console.log("draw update", this.name, this.sliced);
         // Move each half separately
         this.slice1x += this.slice1xSpeed;
         this.slice1y += this.slice1ySpeed;

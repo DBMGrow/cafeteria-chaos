@@ -33,6 +33,12 @@ Sword.prototype.update = function(){
 
 Sword.prototype.checkSlice = function (fruit) {
    // already sliced or not enough swipe data?
+
+   if (!fruit) {
+    console.error("Invalid fruit object passed to checkSlice");
+    return false;
+   }
+   
    if (fruit.sliced || this.swipes.length < 2) return false;
 
    // last two swipe points  (segment P1-P2)

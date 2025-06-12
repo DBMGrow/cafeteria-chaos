@@ -9,7 +9,7 @@ var isGameOver = false
 var gravity = 0.1
 var sword
 var fruit = []
-const bombitem = ["preprite1"]
+const bombitem = ["preprite"]
 var fruitsList = [
   "apple",
   "chicken-nugget",
@@ -50,7 +50,7 @@ function preload() {
   over = loadSound("sounds/over.mp3")
 
   // LOAD IMAGES
-  for (var i = 0; i < fruitsList.length - bombitem.length; i++) {
+  for (var i = 0; i < fruitsList.length; i++) {
     slicedFruitsImgs[2 * i] = loadImage("images/" + fruitsList[i] + "-1.png")
     slicedFruitsImgs[2 * i + 1] = loadImage("images/" + fruitsList[i] + "-2.png")
   }
@@ -238,19 +238,23 @@ function game() {
       }
       fruit.splice(i, 1)
     } else {
-      if (fruit[i].sliced && bombitem.includes(fruit[i].name)) {
-        // Check for bomb
-        boom.play()
-        gameOver()
-        // lives--;
-        // x++;
-        // if (lives < 1) {
-        //   gameOver(); // Trigger game over only if lives are zero
-        // }
-        // fruit.splice(i, 1);
+      if (bombitem.includes(fruit[i].name)) {
+        console.log(bombitem.includes(fruit[i].name))
+        if (sword.checkSlice(fruit[i]) && fruit[i].name === "preprite") {
+          boom.play();
+          lives--; 
+          spliced.play()
+          fruit[i].slice() // <-- Call the slice method here!
+          fruit[i].update()
+          fruit[i].draw()
+          if (lives < 1) {
+            gameOver(); // Trigger game over if lives are zero
+          }
+        }
       }
       if (sword.checkSlice(fruit[i]) && !bombitem.includes(fruit[i].name)) {
         // Sliced fruit
+        console.log("fruit[i].slice()")
         spliced.play()
         points++
         fruitsSlicedPerPress++ // Increment the counter for sliced fruits
