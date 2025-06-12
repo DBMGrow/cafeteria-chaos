@@ -9,12 +9,6 @@
 
     <!-- STYLE -->
     <style>
-      body {
-        text-align: center;
-        background: url("images/cafeteria-backgroundv1.png") no-repeat center center;
-        background-size: cover;
-      }
-
       body, #gameCanvas, #gameCanvas * , img, canvas {
         user-select: none;
         -webkit-user-select: none;
@@ -34,7 +28,7 @@
 
   <body
   id="mainBodyContainer"
-    class="flex flex-col lg:pt-8 items-center justify-start min-h-screen bg-cover bg-center bg-no-repeat backdrop-blur-sm"
+    class="flex flex-col lg:pt-8 items-center justify-start min-h-screen bg-black bg-cover bg-center bg-no-repeat backdrop-blur-sm"
   >
 
     <div class="">
@@ -42,19 +36,26 @@
       id="gameCanvas"
       class="relative lg:w-[800px] lg:h-[635px] w-screen h-screen lg:mt-5 bg-cover bg-center bg-no-repeat rounded-lg shadow-xl shadow-xl/30 inset-shadow-sm inset-shadow-gray-500 overflow-hidden"
       >
-      <canvas id="confetti-canvas" class="absolute right-0 left-0"></canvas>
+      <!-- <canvas id="confetti-canvas" class="absolute right-0 left-0"></canvas> -->
       
-        <div id="gameMenu" class="absolute right-0 left-0 hidden">
+        <div id="gameMenu" class="absolute flex flex-col justify-between inset-0 hidden">
           <div class="flex justify-center items-center gap-4 sm:mt-10">
             <img src="images/cafeteria-logo.png" alt="cafeteria-logo" draggable="false" class="lg:w-[500px] lg:h-[165px] w-[318px] h-[90px] mt-5" />
             <img src="images/game-over.png" alt="gameOver" draggable="false" class="lg:w-[500px] lg:h-[175px] w-[350px] h-[100px] md:mt-10 mt-4 hidden" />
           </div>
-          <div id="playGameContainer" class="relative w-full lg:h-[400px] max-lg:mt-32 flex items-center justify-center">
-            <img src="images/new-game.png" draggable="false" alt="newgame" class="playGame absolute lg:size-44 size-24 cursor-pointer" />
+          <div id="playGameContainer" class="flex flex-col items-center justify-end lg:gap-4 gap-2 mb-2">
+            <img src="images/new-game.png" draggable="false" alt="newgame" class="playGame lg:size-44 size-24 cursor-pointer" />
+            <div class="lg:mx-16 mx-3 p-1.5 bg-gradient-to-b from-orange-200 to-orange-400 rounded-xl">
+              <p class="font-bold lg:text-sm text-xs leading-6 text-base/6 bg-gradient-to-b from-orange-500 to-orange-600 text-orange-200 w-auto break-words rounded-lg py-1 pl-2">
+                Chaos has broken out in the cafeteria! Food is flying all over the place. Help the cafeteria workers by using your handy spatula to swat the food out of the air. But be careful, don't swat the Everidge products 
+                ~<img src="images/preprite1.png" draggable="false" alt="preprite dialog" class="size-6 inline-block align-middle" />~
+                they're the bomb when it comes to quality, and you don't want to mess with that!
+              </p>
+            </div>
           </div>
         </div>
 
-        <div class="absolute top-44 right-2 flex flex-col gap-2">
+        <div class="absolute lg:top-2 top-32 right-2 flex flex-col gap-2">
           <div id="logout" class="bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden">
             <button id="logout-button" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 w-20">Logout</button>
           </div>
