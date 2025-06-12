@@ -47,7 +47,12 @@ highscoresRouter.post("/reset", {}, async (req, res) => {
 highscoresRouter.post("/", {}, async (req, res) => {
   try {
     const session = await req.getSession()
-    const { email, name ,score } = req.body
+    const { email, name, score } = req.body
+
+    if (!email || !name || !score) {
+      return res.status(400).success({ success: false, message: "Email, name, and score are required" })
+    }
+
     const emailExist = await db.selectFrom("Highscores").where("email", "=", email).selectAll().executeTakeFirst()
 
     if (emailExist?.email) {

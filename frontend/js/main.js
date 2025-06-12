@@ -39,7 +39,7 @@ let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
 const playGameContainer = document.getElementById("playGameContainer")
 const logoutButtonBody = document.getElementById("logout")
 const openDashboardButton = document.getElementById("open_dashboard")
-const fullscreenButton = document.getElementById("fullscreen-button");
+const fullscreenButton = document.getElementById("fullscreen-button")
 
 function preload() {
   // LOAD SOUNDS
@@ -212,8 +212,7 @@ function game() {
   if (timerValue < 20) {
     fruitIncraeseRate = 4
   }
-  
-  console.log("Current frame count:", frameCount % 5, noise(frameCount))
+
   if (frameCount % fruitIncraeseRate === 0) {
     if (noise(frameCount) > 0.69) {
       fruit.push(randomFruit()) // Display new fruit
@@ -243,6 +242,12 @@ function game() {
         // Check for bomb
         boom.play()
         gameOver()
+        // lives--;
+        // x++;
+        // if (lives < 1) {
+        //   gameOver(); // Trigger game over only if lives are zero
+        // }
+        // fruit.splice(i, 1);
       }
       if (sword.checkSlice(fruit[i]) && !bombitem.includes(fruit[i].name)) {
         // Sliced fruit
@@ -255,6 +260,7 @@ function game() {
       }
     }
   }
+
   if (frameCount % 2 === 0) {
     sword.update()
   }
@@ -333,22 +339,22 @@ function gameOver() {
   // Check if leaderboardData is empty
   if (leaderboardData.length === 0 || leaderboardData.length < 10) {
     console.log("Leaderboard is empty or incomplete. Showing addNewHighScores form.")
-    addNewHighScores()
+    showhighScoresForm()
     return // Exit the function early
   }
 
   const topScore = leaderboardData[9]?.score
 
   if (score > topScore) {
-    addNewHighScores()
+    showhighScoresForm({ isHighScore: true, playerScore: score })
   } else {
-    playAgainButton()
+    if (score < 1) {
+      playAgainButton()
+      return
+    }
+    // If the score is not a high score, show the form with a message
+    showhighScoresForm({ isHighScore: false, playerScore: score })
   }
-  console.log("lost")
-}
-
-function addNewHighScores() {
-  showhighScoresForm()
 }
 
 function playAgainButton() {
@@ -405,13 +411,72 @@ function showLoginForm() {
   document.getElementById("leaderboard").style.display = "none"
 }
 
-function showhighScoresForm() {
+function showhighScoresForm({ isHighScore, playerScore }) {
   startConfetti()
 
   // Stop after 5 seconds
   setTimeout(stopConfetti, 20000)
   const highscores = document.getElementById("high_scores")
+  const highscoresTitle = highscores.getElementsByClassName("title") // Replace "child-class-name" with the actual class name of the children
+  const highscoresContent = highscores.getElementsByClassName("content") // Replace "child-class-name" with the actual class name of the children
+  if (isHighScore) {
+    Array.from(highscoresTitle)[0].textContent = "New High Score!"
+    Array.from(
+      highscoresContent
+    )[0].textContent = `Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.`
+  } else {
+    Array.from(highscoresTitle)[0].textContent = "Nice Try!"
+    Array.from(highscoresContent)[0].textContent =
+      " Not a new high score, but you can still enter the YETI drawing! Please enter your contact information below."
+  }
+
   highscores.classList.remove("hidden")
+
+  // Show the highscore form
+  document.getElementById("highScoresForm").addEventListener("submit", async function (event) {
+    event.preventDefault()
+
+    const email = event.target.querySelector("#email").value
+    const name = event.target.querySelector("#name").value
+    const clickedButton = event.submitter
+    console.log(`Button pressed: ${clickedButton.id}`) // Log the button's id
+
+    if (clickedButton.id === "cancel") {
+      console.log("Cancel button pressed")
+      document.getElementById("high_scores").classList.add("hidden") // Hide the form
+      playAgainButton()
+      return
+    }
+
+    if (clickedButton.id === "enter") {
+      try {
+        if (!email || !name) {
+          alert("Please fill out all the required fields: name and email.")
+          return
+        }
+
+        const response = await fetch(`/highscores`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, score, name }),
+        })
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        // Clear the input fields after successful submission
+        event.target.querySelector("#email").value = ""
+        event.target.querySelector("#name").value = ""
+        await fetchLeaderboard()
+        populateLeaderboard()
+        document.getElementById("high_scores").classList.add("hidden") // Hide the form
+        playAgainButton()
+        return response
+      } catch (error) {
+        console.error("Error submitting high score:", error)
+      }
+    }
+  })
 }
 
 // Handle login form submission
@@ -470,49 +535,6 @@ document.getElementById("logout-button").addEventListener("click", async functio
   }
 })
 
-// Show the highscore form
-document.getElementById("highScoresForm").addEventListener("submit", async function (event) {
-  event.preventDefault()
-
-  const email = event.target.querySelector("#email").value
-  const name = event.target.querySelector("#name").value
-  const clickedButton = event.submitter
-  console.log(`Button pressed: ${clickedButton.id}`) // Log the button's id
-
-  if (clickedButton.id === "cancel") {
-    console.log("Cancel button pressed")
-    document.getElementById("high_scores").classList.add("hidden") // Hide the form
-    playAgainButton()
-    return
-  }
-
-  if (clickedButton.id === "enter") {
-    try {
-      if (!email) {
-        alert("Please enter a valid email.")
-        return
-      }
-
-      const response = await fetch(`/highscores`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, score, name }),
-      })
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      // console.log("High score submitted successfully:", result)
-      await fetchLeaderboard()
-      populateLeaderboard()
-      document.getElementById("high_scores").classList.add("hidden") // Hide the form
-      playAgainButton()
-      return response
-    } catch (error) {
-      console.error("Error submitting high score:", error)
-    }
-  }
-})
-
 playGameContainer.addEventListener("click", function (event) {
   // Check if the clicked element has the "playGame" class
   if (event.target.classList.contains("playGame")) {
@@ -528,12 +550,6 @@ playGameContainer.addEventListener("click", function (event) {
     console.log("Clicked outside the images")
   }
 })
-
-//open modal to resret leaderboard button
-// document.getElementById("reset_leaderboard").addEventListener("click", function (event) {
-//   const confirmResetModal = document.getElementById("confirm_reset")
-//   confirmResetModal.style.display = "block"
-// })
 
 //modal to resret leaderboard
 document.getElementById("resetLeaderboardForm").addEventListener("submit", async function (event) {
@@ -590,20 +606,19 @@ function ShowLogoutButton({ isHidden = 0 }) {
 function ShowLeaderboardButton({ isHidden = 0 }) {
   const isMobilelandscape = window.matchMedia("(max-height: 430px)").matches
   const leaderboardButton = document.getElementById("open_dashboard")
-  
 
   if (!isMobilelandscape) {
     leaderboardButton.style.display = "none"
-    fullscreenButton.style.display = "none";
+    fullscreenButton.style.display = "none"
     return // Don't show leaderboard button
   }
 
   if (isHidden) {
     leaderboardButton.style.display = "none"
-    fullscreenButton.style.display = "none";
+    fullscreenButton.style.display = "none"
   } else {
     leaderboardButton.style.display = "block"
-    fullscreenButton.style.display = "block";
+    fullscreenButton.style.display = "block"
   }
 }
 
@@ -690,7 +705,7 @@ function checkOrientation() {
     overlay.classList.remove("hidden")
     overlay.classList.add("flex")
     document.body.style.overflow = "hidden"
-    document.getElementById("leaderboard").style.display = "none" 
+    document.getElementById("leaderboard").style.display = "none"
   } else {
     overlay.classList.add("hidden")
     overlay.classList.remove("flex")
@@ -705,34 +720,32 @@ window.addEventListener("resize", checkOrientation)
 window.addEventListener("orientationchange", checkOrientation)
 window.addEventListener("DOMContentLoaded", checkOrientation)
 
-
 document.addEventListener("DOMContentLoaded", () => {
-  const mainBodyContainer = document.getElementById("mainBodyContainer");
+  const mainBodyContainer = document.getElementById("mainBodyContainer")
 
-    fullscreenButton.addEventListener("click", () => {
-      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        if (mainBodyContainer.requestFullscreen) {
-          mainBodyContainer.requestFullscreen();
-        } else if (mainBodyContainer.webkitRequestFullscreen) {
-          mainBodyContainer.webkitRequestFullscreen(); // Safari
-        }
-      } else {
-        // Exit fullscreen mode
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen(); // Safari
-        }
+  fullscreenButton.addEventListener("click", () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      if (mainBodyContainer.requestFullscreen) {
+        mainBodyContainer.requestFullscreen()
+      } else if (mainBodyContainer.webkitRequestFullscreen) {
+        mainBodyContainer.webkitRequestFullscreen() // Safari
       }
-    });
-  });
+    } else {
+      // Exit fullscreen mode
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen() // Safari
+      }
+    }
+  })
+})
 
-  window.addEventListener("load", () => {
-    setTimeout(() => {
-      window.scrollTo(0, 1); // Scroll to hide the address bar
-    }, 100);
-  });
-
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    window.scrollTo(0, 1) // Scroll to hide the address bar
+  }, 100)
+})
 
 // function randomFruit(){
 //   // Use this modified version to increase bomb frequency
