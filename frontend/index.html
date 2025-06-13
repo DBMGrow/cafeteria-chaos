@@ -126,12 +126,17 @@
         </div>
         <form id="highScoresForm" class="lg:space-y-4 space-y-2">
           <div class="flex lg:flex-col items-center">
-            <div class="group relative">
-              <img src="images/yeti-bottle1.png" alt="High Score" class="lg:w-44 w-52 block group-hover:hidden" />
-              <img src="images/yeti-bottle2.png" alt="High Score" class="lg:w-44 w-52 hidden group-hover:block" />
+            <div class="inline-block text-xl font-medium border border-orange-300 bg-gradient-to-b from-orange-200 to-orange-400 px-3 py-2 rounded-xl">
+            Your Score: <span class="score text-bold">?</span>
             </div>
-            <p class="content text-sm text-gray-700 font-medium lg:text-center">Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.</p>
-          </div>
+            <div class="flex lg:flex-col items-center">
+              <div class="group relative">
+                <img src="images/yeti-bottle1.png" alt="High Score" class="lg:w-44 w-52 block group-hover:hidden" />
+                <img src="images/yeti-bottle2.png" alt="High Score" class="lg:w-44 w-52 hidden group-hover:block" />
+              </div>
+              <p class="content text-sm text-gray-700 font-medium lg:text-center">Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.</p>
+            </div>
+            </div>
           <div class="flex gap-2">
             <input
             type="text"
@@ -212,7 +217,7 @@
       </div>
 
       <!-- Leaderboard entries -->
-      <div class="space-y-1 bg-gradient-to-b from-orange-400 to-orange-600 rounded-3xl p-2">
+      <div class="space-y-1 bg-gradient-to-b from-orange-400 to-orange-600 rounded-xl p-2">
         <!-- <div>
                 <button id="reset_leaderboard" class="py-1 px-4 bg-red-500 text-white rounded-xl hover:bg-orange-600">Reset</button>
         </div> -->

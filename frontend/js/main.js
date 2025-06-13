@@ -421,8 +421,9 @@ function showhighScoresForm({ isHighScore, playerScore }) {
   // Stop after 5 seconds
   setTimeout(stopConfetti, 20000)
   const highscores = document.getElementById("high_scores")
-  const highscoresTitle = highscores.getElementsByClassName("title") // Replace "child-class-name" with the actual class name of the children
-  const highscoresContent = highscores.getElementsByClassName("content") // Replace "child-class-name" with the actual class name of the children
+  const highscoresTitle = highscores.getElementsByClassName("title") 
+  const highscoresContent = highscores.getElementsByClassName("content") 
+  const highscoreScore = highscores.getElementsByClassName("score") 
   if (isHighScore) {
     Array.from(highscoresTitle)[0].textContent = "New High Score!"
     Array.from(
@@ -434,6 +435,7 @@ function showhighScoresForm({ isHighScore, playerScore }) {
       " Not a new high score, but you can still enter the YETI drawing! Please enter your contact information below."
   }
 
+  Array.from(highscoreScore)[0].textContent = score
   highscores.classList.remove("hidden")
 
   // Show the highscore form
