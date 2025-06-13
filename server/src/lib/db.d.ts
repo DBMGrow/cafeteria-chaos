@@ -7,9 +7,10 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 export interface Highscores {
   created_at: Generated<Date | null>;
   email: string;
+  first_name: string;
   highscore_id: Generated<number>;
+  last_name: string;
   location_id: number;
-  name: string;
   score: number;
   updated_at: Generated<Date | null>;
 }

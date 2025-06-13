@@ -441,7 +441,8 @@ function showhighScoresForm({ isHighScore, playerScore }) {
     event.preventDefault()
 
     const email = event.target.querySelector("#email").value
-    const name = event.target.querySelector("#name").value
+    const first_name = event.target.querySelector("#first_name").value
+    const last_name = event.target.querySelector("#last_name").value
     const clickedButton = event.submitter
     console.log(`Button pressed: ${clickedButton.id}`) // Log the button's id
 
@@ -454,15 +455,15 @@ function showhighScoresForm({ isHighScore, playerScore }) {
 
     if (clickedButton.id === "enter") {
       try {
-        if (!email || !name) {
-          alert("Please fill out all the required fields: name and email.")
+        if (!email || !first_name || !last_name) {
+          alert("Please fill out all the required fields: name, last name and email.")
           return
         }
 
         const response = await fetch(`/highscores`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, score, name }),
+          body: JSON.stringify({ email, score, first_name, last_name }),
         })
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -470,7 +471,8 @@ function showhighScoresForm({ isHighScore, playerScore }) {
 
         // Clear the input fields after successful submission
         event.target.querySelector("#email").value = ""
-        event.target.querySelector("#name").value = ""
+        event.target.querySelector("#first_name").value = ""
+        event.target.querySelector("#last_name").value = ""
         await fetchLeaderboard()
         populateLeaderboard()
         document.getElementById("high_scores").classList.add("hidden") // Hide the form

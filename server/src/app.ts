@@ -3,9 +3,9 @@ import { db } from "./lib/database"
 import express, { json } from "express"
 import path from "path"
 
-import locationsRouter from "./endpoints/locations/routes"
+import locationsRouter from "./endpoints/locations/locations.routes"
 import authRoutes from "./endpoints/auths/authRoutes"
-import highscoresRouter from "./endpoints/highscores/routes"
+import highscoresRouter from "./endpoints/highscores/highscores.routes"
 import cookieParser from "cookie-parser"
 
 const app = express()

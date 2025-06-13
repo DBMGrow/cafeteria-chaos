@@ -1,5 +1,7 @@
 import Router from "../../lib/router"
 import { db } from "../../lib/database"
+import { HighscoresSchema } from "./highscores.schemas"
+import { z } from "zod"
 
 const highscoresRouter = new Router()
 
@@ -47,16 +49,19 @@ highscoresRouter.post("/reset", {}, async (req, res) => {
 highscoresRouter.post("/", {}, async (req, res) => {
   try {
     const session = await req.getSession()
-    const { email, name, score } = req.body
+    // Validate the request body using the schema
+    const parsedBody = HighscoresSchema.parse(req.body)
 
-    if (!email || !name || !score) {
+    const { email, first_name, last_name, score } = parsedBody
+
+    if (!email || !first_name || !last_name || !score) {
       return res.status(400).success({ success: false, message: "Email, name, and score are required" })
     }
 
     const emailExist = await db.selectFrom("Highscores").where("email", "=", email).selectAll().executeTakeFirst()
 
     if (emailExist?.email) {
-      await db.updateTable("Highscores").set({ score, name }).where("email", "=", email).execute()
+      await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).execute()
       return res.status(200).success({ success: true, message: "Highscore updated successfully" })
     }
 
@@ -70,7 +75,7 @@ highscoresRouter.post("/", {}, async (req, res) => {
     res.status(200).success({ success: true, message: "Highscore added successfully" })
   } catch (error) {
     console.error(error)
-    res.status(500).send("Internal Server Error")
+    res.status(500).send(error)
   }
 })
 
