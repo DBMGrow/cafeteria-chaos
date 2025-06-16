@@ -241,14 +241,14 @@ function game() {
       if (bombitem.includes(fruit[i].name)) {
         console.log(bombitem.includes(fruit[i].name))
         if (sword.checkSlice(fruit[i]) && fruit[i].name === "preprite") {
-          boom.play();
-          lives--; 
+          boom.play()
+          lives--
           spliced.play()
           fruit[i].slice() // <-- Call the slice method here!
           fruit[i].update()
           fruit[i].draw()
           if (lives < 1) {
-            gameOver(); // Trigger game over if lives are zero
+            gameOver() // Trigger game over if lives are zero
           }
         }
       }
@@ -343,7 +343,7 @@ function gameOver() {
   // Check if leaderboardData is empty
   if (leaderboardData.length === 0 || leaderboardData.length < 10) {
     console.log("Leaderboard is empty or incomplete. Showing addNewHighScores form.")
-    showhighScoresForm()
+    showhighScoresForm({ isHighScore: true, playerScore: score })
     return // Exit the function early
   }
 
@@ -421,9 +421,9 @@ function showhighScoresForm({ isHighScore, playerScore }) {
   // Stop after 5 seconds
   setTimeout(stopConfetti, 20000)
   const highscores = document.getElementById("high_scores")
-  const highscoresTitle = highscores.getElementsByClassName("title") 
-  const highscoresContent = highscores.getElementsByClassName("content") 
-  const highscoreScore = highscores.getElementsByClassName("score") 
+  const highscoresTitle = highscores.getElementsByClassName("title")
+  const highscoresContent = highscores.getElementsByClassName("content")
+  const highscoreScore = highscores.getElementsByClassName("score")
   if (isHighScore) {
     Array.from(highscoresTitle)[0].textContent = "New High Score!"
     Array.from(
@@ -667,6 +667,12 @@ function populateLeaderboard() {
   console.log("populateLeaderboard: ", leaderboardData)
 
   leaderboardRows.innerHTML = ""
+
+  if (leaderboardData.length === 0) {
+    leaderboardRows.innerHTML = `
+    <div class="text-center text-gray-50 font-medium text-orange-100">No high scores have been recorded yet.</div>`
+    return
+  }
 
   leaderboardData.forEach((player, index) => {
     const opacity = Math.max(0.3, 1 - (index + 1 - 3) * 0.08)
