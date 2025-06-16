@@ -125,15 +125,12 @@
           <h1 class="title relative text-3xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">New High Score!</h1>
         </div>
         <form id="highScoresForm" class="lg:space-y-4 space-y-2">
-          <div class="flex lg:flex-col items-center">
+          <div class="flex flex-col items-center">
             <div class="inline-block text-xl font-medium border border-orange-300 bg-gradient-to-b from-orange-200 to-orange-400 px-3 py-2 rounded-xl">
             Your Score: <span class="score text-bold">?</span>
             </div>
-            <div class="flex lg:flex-col items-center">
-              <div class="group relative">
-                <img src="images/yeti-bottle1.png" alt="High Score" class="lg:w-44 w-52 block group-hover:hidden" />
-                <img src="images/yeti-bottle2.png" alt="High Score" class="lg:w-44 w-52 hidden group-hover:block" />
-              </div>
+            <div class="flex lg:flex-col items-center pt-5">
+              <img src="images/yetis.png" alt="High Score" class="lg:w-80 w-32" />
               <p class="content text-sm text-gray-700 font-medium lg:text-center">Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.</p>
             </div>
             </div>
@@ -199,8 +196,7 @@
 
   <div
       id="leaderboard"
-      class="absolute space-y-3 lg:w-96 w-full bottom-2 left-2 max-lg:left-1/2 max-lg:transform max-lg:-translate-x-1/2 bg-gradient-to-b from-orange-200 to-orange-300 rounded-3xl p-3 shadow-xl hidden"
-    >
+      class="absolute space-y-3 lg:w-96 w-full bottom-2 left-2 max-lg:left-1/2 max-lg:transform max-lg:-translate-x-1/2 bg-gradient-to-b from-orange-200 to-orange-300 rounded-3xl p-3 shadow-xl hidden">
     <!-- Close leaderboard button  -->
     <button id="leaderboardCloseButton" class="absolute top-3 right-1 text-orange-500 hover:text-orange-700 lg:hidden">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
