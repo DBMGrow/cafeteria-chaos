@@ -127,10 +127,10 @@ export class ResponseMethods {
       sameSite: "strict",
     }
 
-    this.res.cookie("_api_key", cookieOptions)
-    this.res.cookie("_name", cookieOptions)
-    this.res.cookie("_locationType", cookieOptions)
-    this.res.cookie("_locationID", cookieOptions)
+    this.res.cookie("_api_key", "", cookieOptions)
+    this.res.cookie("_name", "", cookieOptions)  
+    this.res.cookie("_locationType", "", cookieOptions) 
+    this.res.cookie("_locationID", "", cookieOptions)  
   }
 }
 
