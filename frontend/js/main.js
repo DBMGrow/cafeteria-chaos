@@ -244,6 +244,9 @@ function game() {
           boom.play()
           lives--
           spliced.play()
+
+          showExplosionBomb(fruit[i]);
+
           fruit[i].slice() // <-- Call the slice method here!
           fruit[i].update()
           fruit[i].draw()
@@ -295,6 +298,22 @@ function drawLives() {
   if (lives === 0) {
     image(this.livesImgs2[2], width - 60, 15, responsiveHeight * aspectRatio, responsiveHeight)
   }
+}
+
+// showing explosion after slicing the bomb
+function showExplosionBomb(fruit) {
+  const container = document.getElementById("gameCanvas");
+  const rect = container.getBoundingClientRect();
+  const explosionX = rect.left + fruit.x;
+  const explosionY = rect.top + fruit.y;
+
+  const explosion = createImg("images/explosion.gif");
+  explosion.position(explosionX, fruit.y);
+  explosion.size(100, 100);
+
+  setTimeout(() => {
+    explosion.remove();
+  }, 600);
 }
 
 function mouseReleased() {

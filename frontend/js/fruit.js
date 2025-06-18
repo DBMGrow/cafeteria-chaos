@@ -47,19 +47,6 @@ Fruit.prototype.draw = function () {
     // Draw sliced fruit
     image(this.slicedFruit1, this.slice1x, this.slice1y, this.size + 25, this.size + 30)
     image(this.slicedFruit2, this.slice2x, this.slice2y, this.size + 25, this.size + 30)
-
-    // Check if the fruit is a bomb and display explosion GIF
-        if (this.name === "preprite" && !this.explosionShown) {
-            this.explosionShown = true
-            const explosion = createImg("images/explosion.gif")
-            explosion.position(this.x + 450, this.y)
-            explosion.size(100, 100)
-
-          // Remove the explosion GIF after 500ms
-          setTimeout(() => {
-            explosion.remove()
-          }, 800)
-        }
   } else {
     // Draw fruit
     image(this.fruit, this.x, this.y, this.size, this.size)
