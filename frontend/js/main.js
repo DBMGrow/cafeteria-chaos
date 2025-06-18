@@ -254,7 +254,6 @@ function game() {
       }
       if (sword.checkSlice(fruit[i]) && !bombitem.includes(fruit[i].name)) {
         // Sliced fruit
-        console.log("fruit[i].slice()")
         spliced.play()
         points++
         fruitsSlicedPerPress++ // Increment the counter for sliced fruits
