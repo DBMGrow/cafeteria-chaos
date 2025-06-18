@@ -52,13 +52,13 @@ Fruit.prototype.draw = function () {
         if (this.name === "preprite" && !this.explosionShown) {
             this.explosionShown = true
             const explosion = createImg("images/explosion.gif")
-            explosion.position(this.x + 500, this.y)
+            explosion.position(this.x + 450, this.y)
             explosion.size(100, 100)
 
           // Remove the explosion GIF after 500ms
           setTimeout(() => {
             explosion.remove()
-          }, 500)
+          }, 800)
         }
   } else {
     // Draw fruit
