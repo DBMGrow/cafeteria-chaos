@@ -310,7 +310,7 @@ function showExplosionBomb(fruit) {
 
   const explosionSize = 100; 
   const explosionX = rect.left + fruit.x - explosionSize / 2;
-  const explosionY = rect.top + fruit.y - explosionSize / 2;
+  const explosionY = rect.top + fruit.y - explosionSize;
 
   const explosion = createImg("images/explosion.gif");
   explosion.position(explosionX, explosionY);
