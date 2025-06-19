@@ -303,6 +303,9 @@ function drawLives() {
 // showing explosion after slicing the bomb
 function showExplosionBomb(fruit) {
   const container = document.getElementById("gameCanvas");
+  if (!container || typeof fruit.x !== "number" || typeof fruit.y !== "number") {
+    return; // Don't try to show explosion if not ready
+  }
   const rect = container.getBoundingClientRect();
 
   const explosionSize = 100; 
