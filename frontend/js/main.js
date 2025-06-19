@@ -304,12 +304,14 @@ function drawLives() {
 function showExplosionBomb(fruit) {
   const container = document.getElementById("gameCanvas");
   const rect = container.getBoundingClientRect();
-  const explosionX = rect.left + fruit.x;
-  const explosionY = rect.top + fruit.y;
+
+  const explosionSize = 100; 
+  const explosionX = rect.left + fruit.x - explosionSize / 2;
+  const explosionY = rect.top + fruit.y - explosionSize / 2;
 
   const explosion = createImg("images/explosion.gif");
-  explosion.position(explosionX, fruit.y);
-  explosion.size(100, 100);
+  explosion.position(explosionX, explosionY);
+  explosion.size(explosionSize, explosionSize);
 
   setTimeout(() => {
     explosion.remove();
