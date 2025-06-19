@@ -302,9 +302,16 @@ function drawLives() {
 
 // showing explosion after slicing the bomb
 function showExplosionBomb(fruit) {
+  // Wait until p5.js and DOM are ready
+  if (!window.createImg || !document.getElementById("gameCanvas")) {
+    setTimeout(() => showExplosionBomb(fruit), 100);
+    return;
+  }
   const container = document.getElementById("gameCanvas");
-  if (!container || typeof fruit.x !== "number" || typeof fruit.y !== "number") {
-    return; // Don't try to show explosion if not ready
+  if (!container || typeof fruit.x !== "number" || typeof fruit.y !== "number" || isNaN(fruit.x) || isNaN(fruit.y)) {
+    // Try again shortly if coordinates are not ready
+    setTimeout(() => showExplosionBomb(fruit), 50);
+    return;
   }
   const rect = container.getBoundingClientRect();
 
