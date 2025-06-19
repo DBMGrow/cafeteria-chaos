@@ -42,16 +42,25 @@ Fruit.prototype.slice = function () {
 }
 
 Fruit.prototype.draw = function () {
-  fill(this.color)
+  fill(this.color);
+  push(); // Save current drawing settings
+  imageMode(CENTER); // Draw from center
+
   if (this.sliced) {
     // Draw sliced fruit
-    image(this.slicedFruit1, this.slice1x, this.slice1y, this.size + 25, this.size + 30)
-    image(this.slicedFruit2, this.slice2x, this.slice2y, this.size + 25, this.size + 30)
+    image(this.slicedFruit1, this.slice1x, this.slice1y, this.size + 25, this.size + 30);
+    image(this.slicedFruit2, this.slice2x, this.slice2y, this.size + 25, this.size + 30);
   } else {
-    // Draw fruit
-    image(this.fruit, this.x, this.y, this.size, this.size)
+    image(this.fruit, this.x, this.y, this.size, this.size);
+
+    // Optional: show slicing hit zone for testing
+    // stroke(255, 0, 0, 100); // Red translucent circle
+    // noFill();
+    // ellipse(this.x, this.y, this.size * 0.9); // Match detection range
   }
-}
+
+  pop(); // Restore drawing settings
+};
 
 Fruit.prototype.update = function () {
   if (this.sliced) {
