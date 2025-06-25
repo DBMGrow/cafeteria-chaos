@@ -642,9 +642,10 @@ function ShowLogoutButton({ isHidden = 0 }) {
 }
 
 function ShowLeaderboardButton({ isHidden = 0 }) {
-  const isMobilelandscape = window.matchMedia("(max-height: 430px)").matches
+  const isMobilelandscape = window.matchMedia("(max-width: 1367px)").matches
   const leaderboardButton = document.getElementById("open_dashboard")
 
+  
   if (!isMobilelandscape) {
     leaderboardButton.style.display = "none"
     fullscreenButton.style.display = "none"
@@ -661,7 +662,7 @@ function ShowLeaderboardButton({ isHidden = 0 }) {
 }
 
 function drawLeaderboard({ isHidden = 0 }) {
-  const isMobile = window.matchMedia("(max-width: 767px)").matches
+  const isMobile = window.matchMedia("(max-width: 1367px)").matches
   const isPortrait = window.matchMedia("(orientation: portrait)").matches
   if (isMobile && isPortrait) return // Don't show leaderboard on mobile portrait
 
@@ -742,7 +743,7 @@ setInterval(() => {
 // Display the rotate overlay in mobile portrait view
 function checkOrientation() {
   const overlay = document.getElementById("rotate-portrait-overlay")
-  const isMobile = window.matchMedia("(max-width: 767px)").matches
+  const isMobile = window.matchMedia("(max-width: 1367px)").matches
   const isPortrait = window.matchMedia("(orientation: portrait)").matches
 
   if (isMobile && isPortrait) {

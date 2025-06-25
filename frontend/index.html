@@ -2,13 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,
+     user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Cafeteria Chaos</title>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" />
 
     <!-- STYLE -->
     <style>
+    /* @media (max-width: 1368px) {
+    #gameCanvas {
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    }
+    }
+    @media (min-width: 1368px) {
+    #gameCanvas {
+    width: 800px !important;
+    height: 635px !important;
+    }
+    } */
       body, #gameCanvas, #gameCanvas * , img, canvas {
         user-select: none;
         -webkit-user-select: none;
@@ -28,13 +42,13 @@
 
   <body
   id="mainBodyContainer"
-    class="flex flex-col lg:pt-8 items-center justify-start min-h-screen bg-black bg-cover bg-center bg-no-repeat backdrop-blur-sm"
+    class="flex flex-col 1xl:pt-8 items-center justify-start min-h-screen bg-black bg-cover bg-center bg-no-repeat backdrop-blur-sm overflow-hidden"
   >
 
     <div class="">
       <div
       id="gameCanvas"
-      class="relative lg:w-[800px] lg:h-[635px] w-screen h-screen lg:mt-5 bg-cover bg-center bg-no-repeat rounded-lg shadow-xl shadow-xl/30 inset-shadow-sm inset-shadow-gray-500 overflow-hidden"
+      class="relative 1xl:w-[800px] 1xl:h-[635px] w-screen h-screen 1xl:mt-5 bg-cover bg-center bg-no-repeat 1xl:rounded-lg shadow-xl shadow-xl/30 inset-shadow-sm inset-shadow-gray-500 overflow-hidden"
       >
       <canvas id="confetti-canvas" class="absolute right-0 left-0"></canvas>
       
@@ -47,15 +61,20 @@
             <img src="images/new-game.png" draggable="false" alt="newgame" class="playGame lg:size-44 size-24 cursor-pointer" />
             <div class="lg:mx-16 mx-3 p-1.5 bg-gradient-to-b from-orange-200 to-orange-400 rounded-xl">
               <p class="font-medium lg:text-base text-xs leading-6 text-base/6 bg-gradient-to-b from-orange-500 to-orange-600 text-orange-100 w-auto break-words rounded-lg py-1 pl-2">
-                Chaos has broken out in the cafeteria! Food is flying all over the place. Help the cafeteria workers by using your handy spatula to swat the food out of the air. But be careful, don't swat the Everidge products 
+                Chaos has broken out in the cafeteria! Swat the food out of the air. But be careful not to swat the Everidge products
                 ~<img src="images/preprite.png" draggable="false" alt="preprite dialog" class="size-6 inline-block align-middle" />~
-                they're the bomb when it comes to quality, and you don't want to mess with that!
+                They're the bomb when it comes to quality - and you don't want to mess with that!
               </p>
             </div>
           </div>
         </div>
-
-        <div class="absolute lg:top-44 top-32 right-2 flex flex-col gap-2">
+        
+        <div class="absolute top-2 right-2 flex flex-col items-end gap-2">
+          <button id="fullscreen-button" class="bg-gradient-to-b w-[40%] from-orange-200 to-orange-400 p-2 rounded-xl hidden">
+            <div class="bg-orange-500 text-white flex p-2 rounded-lg hover:bg-orange-600">
+              <img src="images/fullscreen.png" alt="fullscreen" class="w-5 h-5" />
+            </div>
+          </button>
           <div id="logout" class="bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden">
             <button id="logout-button" class="w-full py-2 font-medium bg-orange-500 text-orange-100 rounded-xl hover:bg-orange-600 w-20">Logout</button>
           </div>
@@ -68,11 +87,6 @@
         </div>
         </div>
 
-          <button id="fullscreen-button" class="absolute top-2 right-2 bg-gradient-to-b from-orange-200 to-orange-400 py-2 px-3 rounded-xl hidden">
-            <div class="bg-orange-500 text-white flex p-2 rounded-lg hover:bg-orange-600">
-              <img src="images/fullscreen.png" alt="fullscreen" class="w-5 h-5" />
-            </div>
-          </button>
 
         <div id="rotate-portrait-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50 hidden">
           <!-- <img src="images/rotate-phone.png" alt="Rotate Device" class="w-24 mb-4" /> -->
@@ -196,9 +210,9 @@
 
   <div
       id="leaderboard"
-      class="absolute space-y-3 lg:w-96 w-full bottom-2 left-2 max-lg:left-1/2 max-lg:transform max-lg:-translate-x-1/2 bg-gradient-to-b from-orange-200 to-orange-300 rounded-3xl p-3 shadow-xl hidden">
+      class="absolute space-y-3 1xl:w-96 w-full bottom-2 left-2 max-1xl:left-1/2 max-1xl:transform max-1xl:-translate-x-1/2 bg-gradient-to-b from-orange-200 to-orange-300 rounded-3xl p-3 shadow-xl hidden">
     <!-- Close leaderboard button  -->
-    <button id="leaderboardCloseButton" class="absolute top-3 right-1 text-orange-500 hover:text-orange-700 lg:hidden">
+    <button id="leaderboardCloseButton" class="absolute top-3 right-1 text-orange-500 hover:text-orange-700 1xl:hidden">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -231,6 +245,17 @@
 <script type="text/javascript" src="p5/addons/p5.dom.js"></script>
 <script type="text/javascript" src="p5/addons/p5.sound.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        screens: {
+          '1xl': '1368px',
+        },
+      },
+    },
+  }
+</script>
 
 <!-- Custom JavaScript Files -->
 <script src="./js/main.js"></script>
