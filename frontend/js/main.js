@@ -720,7 +720,7 @@ function populateLeaderboard() {
           <h1 class="rank flex justify-center items-center border-2 border-double border-red-900 size-6 max-md:size-5 rounded-full text-center font-bold">${
             index + 1
           }</h1>
-          <h1 class="username flex-auto text-start font-medium">${player.email}</h1>
+          <h1 class="username flex-auto text-start font-medium">${player.first_name} ${player.last_name}</h1>
           <div class="score flex items-center justify-between w-16 ${backgroundColor} rounded-full px-2 text-center font-bold">
           <img src="images/apple.png" alt="score" class="w-5 h-5 mr-1">
           <span class="text-white">${player.score}</span>
