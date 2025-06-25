@@ -634,10 +634,13 @@ function mouseDragged() {
 
 function ShowLogoutButton({ isHidden = 0 }) {
   const logoutButton = document.getElementById("logout")
+  const gamerulesButton = document.getElementById("gamerules-button")
   if (isHidden) {
     logoutButton.style.display = "none"
+    gamerulesButton.style.display = "none"
   } else {
     logoutButton.style.display = "block"
+    gamerulesButton.style.display = "block"
   }
 }
 
@@ -679,6 +682,18 @@ function drawLeaderboard({ isHidden = 0 }) {
 document.getElementById("leaderboardCloseButton").addEventListener("click", function (event) {
   const leaderboard = document.getElementById("leaderboard")
   leaderboard.style.display = "none"
+})
+//open gamerules modal
+document.getElementById("gamerules-button").addEventListener("click", function (event) {
+  const gamerules = document.getElementById("gamerules")
+
+  gamerules.classList.remove("hidden")
+})
+//closse gamerules modal
+document.getElementById("gamerulesCloseButton").addEventListener("click", function (event) {
+  const gamerules = document.getElementById("gamerules")
+console.log("first")
+  gamerules.classList.add("hidden")
 })
 
 //open leaderboard button
