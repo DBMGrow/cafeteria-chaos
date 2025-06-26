@@ -801,6 +801,22 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 })
 
+document.querySelectorAll('#gamerules .overflow-y-auto').forEach(function(el) {
+  el.addEventListener('touchstart', function(e) {
+    var top = el.scrollTop;
+    var totalScroll = el.scrollHeight;
+    var currentScroll = top + el.offsetHeight;
+    // If at the top, scroll down 1px to allow scroll
+    if (top === 0) el.scrollTop = 1;
+    // If at the bottom, scroll up 1px to allow scroll
+    if (currentScroll === totalScroll) el.scrollTop = top - 1;
+  });
+  el.addEventListener('touchmove', function(e) {
+    if (el.offsetHeight < el.scrollHeight)
+      e.stopPropagation(); // Only allow scroll inside modal
+  }, { passive: false });
+});
+
 window.addEventListener("load", () => {
   setTimeout(() => {
     window.scrollTo(0, 1) // Scroll to hide the address bar
