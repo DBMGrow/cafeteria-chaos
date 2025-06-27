@@ -14,15 +14,14 @@ function Fruit(x, y, speed, color, size, fruit, slicedFruit1, slicedFruit2, name
   this.color = color
   this.size = size
   this.xSpeed = randomXSpeed(x)
-  // Use device type for ySpeed
-  const device = getDeviceType();
-  if (device === 'mobile') {
-    this.ySpeed = random(-8, -6);
-  } else if (device === 'tablet') {
-    this.ySpeed = random(-12.5, -8);
-  } else {
-    this.ySpeed = random(-10.4, -7.4);
-  }
+  // Responsive ySpeed based on canvas height
+  let minYSpeed = -6;
+  let maxYSpeed = -12;
+  // Scale ySpeed between min and max based on height (400px = slowest, 900px+ = fastest)
+  let norm = Math.max(0, Math.min(1, (height - 400) / 500));
+  let ySpeed = maxYSpeed * norm + minYSpeed * (1 - norm);
+  
+  this.ySpeed = random(ySpeed * 0.9, ySpeed * 1.1);
   this.fruit = fruit
   this.slicedFruit1 = slicedFruit1
   this.slicedFruit2 = slicedFruit2
