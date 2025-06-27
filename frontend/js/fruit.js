@@ -88,6 +88,22 @@ Fruit.prototype.update = function () {
   }
 }
 
+function getResponsiveFruitSize() {
+  const base = Math.min(width, height);
+  const riginalSize = noise(frameCount) * 20 + 40
+
+  // iPad screens: slightly smaller fruit
+  if (base > 700 && base < 1100) {
+    return base * 0.09 + noise(frameCount) * 6; // e.g. 70-100px
+  }
+  // Mobile: smaller fruit
+  if (base <= 700) {
+    return base * 0.07 + noise(frameCount) * 16; // e.g. 40-60px
+  }   
+  // Desktop: default
+  return base * 0.07 + noise(frameCount) * 7; // e.g. 60-90px
+}
+
 // Original randomFruit function - now replaced with version in main.js
 function randomFruit() {
   // Create randon fruit
@@ -106,8 +122,8 @@ function randomFruit() {
 
   var x = random(width)
   var y = height
-  var size = noise(frameCount) * 20 + 40
-
+  var size = getResponsiveFruitSize()
+  console.log({size})
   var col = color(random(255), random(255), random(255))
   var speed = random(3, 5)
   var fruit = fruitsImgs[idx]
