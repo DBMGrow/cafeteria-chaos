@@ -1,4 +1,12 @@
 // FRUIT
+
+function getDeviceType() {
+  const base = Math.min(width, height);
+  if (base <= 700) return 'mobile';
+  if (base > 700 && base < 1100) return 'tablet';
+  return 'desktop';
+}
+
 function Fruit(x, y, speed, color, size, fruit, slicedFruit1, slicedFruit2, name) {
   this.x = x
   this.y = y
@@ -6,7 +14,15 @@ function Fruit(x, y, speed, color, size, fruit, slicedFruit1, slicedFruit2, name
   this.color = color
   this.size = size
   this.xSpeed = randomXSpeed(x)
-  this.ySpeed = random(-10.4, -7.4)
+  // Use device type for ySpeed
+  const device = getDeviceType();
+  if (device === 'mobile') {
+    this.ySpeed = random(-8, -6);
+  } else if (device === 'tablet') {
+    this.ySpeed = random(-12.5, -8);
+  } else {
+    this.ySpeed = random(-10.4, -7.4);
+  }
   this.fruit = fruit
   this.slicedFruit1 = slicedFruit1
   this.slicedFruit2 = slicedFruit2
@@ -89,19 +105,14 @@ Fruit.prototype.update = function () {
 }
 
 function getResponsiveFruitSize() {
-  const base = Math.min(width, height);
-  const riginalSize = noise(frameCount) * 20 + 40
-
-  // iPad screens: slightly smaller fruit
-  if (base > 700 && base < 1100) {
-    return base * 0.09 + noise(frameCount) * 6; // e.g. 70-100px
+  const device = getDeviceType();
+  if (device === 'tablet') {
+    return Math.min(width, height) * 0.09 + noise(frameCount) * 6;
   }
-  // Mobile: smaller fruit
-  if (base <= 700) {
-    return base * 0.07 + noise(frameCount) * 16; // e.g. 40-60px
-  }   
-  // Desktop: default
-  return base * 0.07 + noise(frameCount) * 7; // e.g. 60-90px
+  if (device === 'mobile') {
+    return Math.min(width, height) * 0.07 + noise(frameCount) * 16;
+  }
+  return Math.min(width, height) * 0.07 + noise(frameCount) * 7;
 }
 
 // Original randomFruit function - now replaced with version in main.js
