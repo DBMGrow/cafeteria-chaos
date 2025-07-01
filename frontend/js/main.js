@@ -282,7 +282,7 @@ function game() {
 }
 
 function drawLives() {
-  const responsiveHeight = Math.min(width, height) * 0.07 // Adjust height based on canvas dimensions
+  const responsiveHeight = Math.min(width, height) * 0.05 // Adjust height based on canvas dimensions
   const aspectRatio = livesImgs[0].width / livesImgs[0].height // Maintain aspect ratio
 
   image(this.livesImgs[0], width - 110, 15, responsiveHeight * aspectRatio, responsiveHeight)
