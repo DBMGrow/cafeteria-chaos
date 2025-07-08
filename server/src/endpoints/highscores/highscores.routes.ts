@@ -1,6 +1,7 @@
 import Router from "../../lib/router"
 import { db } from "../../lib/database"
 import { HighscoresSchema } from "./highscores.schemas"
+import axios from "axios";
 import { z } from "zod"
 
 const highscoresRouter = new Router()
@@ -71,6 +72,12 @@ highscoresRouter.post("/", {}, async (req, res) => {
     }
 
     await db.insertInto("Highscores").values(body).execute()
+
+    // Send the new high score to Zapier
+    if(session.name !== "test") {
+      const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? "";
+      await axios.post(zapierWebhookUrl, body);
+      }
 
     res.status(200).success({ success: true, message: "Highscore added successfully" })
   } catch (error) {
