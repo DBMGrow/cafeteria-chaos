@@ -76,7 +76,7 @@ highscoresRouter.post("/", {}, async (req, res) => {
     // Send the new high score to Zapier
     if(session.name !== "test") {
       const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? "";
-      await axios.post(zapierWebhookUrl, body);
+      await axios.post(zapierWebhookUrl, {...body, location_name: session.name});
       }
 
     res.status(200).success({ success: true, message: "Highscore added successfully" })
