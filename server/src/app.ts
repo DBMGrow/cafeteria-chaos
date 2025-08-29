@@ -7,6 +7,7 @@ import locationsRouter from "./endpoints/locations/locations.routes"
 import authRoutes from "./endpoints/auths/authRoutes"
 import highscoresRouter from "./endpoints/highscores/highscores.routes"
 import cookieParser from "cookie-parser"
+import { sessionFromUrl } from "./lib/middleware"
 
 const app = express()
 
@@ -16,6 +17,7 @@ const app = express()
 
 app.use(json())
 app.use(cookieParser())
+app.use(sessionFromUrl as express.RequestHandler)
 app.get("/api", async (req, res) => {
   const location = await db.selectFrom("Locations").selectAll().executeTakeFirst()
   console.log({ location })
@@ -23,7 +25,6 @@ app.get("/api", async (req, res) => {
 })
 
 const frontendLocation = path.join(__dirname, "..", "..", "frontend")
-
 console.log(frontendLocation)
 console.log(path.join(frontendLocation, "p5", "p5.js"))
 
