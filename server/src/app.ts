@@ -18,11 +18,6 @@ const app = express()
 app.use(json())
 app.use(cookieParser())
 app.use(sessionFromUrl as express.RequestHandler)
-app.get("/api", async (req, res) => {
-  const location = await db.selectFrom("Locations").selectAll().executeTakeFirst()
-  console.log({ location })
-  res.send(`Hello World!! ${location?.name}`)
-})
 
 const frontendLocation = path.join(__dirname, "..", "..", "frontend")
 console.log(frontendLocation)
