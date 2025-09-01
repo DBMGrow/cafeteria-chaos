@@ -1,26 +1,31 @@
 
-import CodedError from "./CodedError"
 import { db } from "./database"
 import Router, { ResponseMethods } from "./router"
 import { NextFunction, Req, Res } from "./types"
 
 export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction)  => {
-  const code = String(req.query.code)
-  const responseMethods = new ResponseMethods(req, res)
-  if (!code) return next()
+  if (req.method !== 'GET' || req.path !== '/') return next();
 
-  // Find location by code
-  const location = await db
-    .selectFrom("Locations")
-    .selectAll()
-    .where("Locations.name", "=", code)
-    .executeTakeFirst()
+  const responseMethods = new ResponseMethods(req, res);
 
-  if (location) {
+  // Safely read ?lb=... (handle array case from query parsers)
+  const rawLb = Array.isArray((req as any).query?.lb) ? (req as any).query.lb[0] : (req as any).query?.lb;
+  const locationsName = rawLb || 'test';
 
-    await responseMethods.addSession(location)
-    req.user = location
+  console.log(`${locationsName} name`, rawLb || '(no lb)');
+
+  try {
+    const location = await db
+      .selectFrom('Locations')
+      .selectAll()
+      .where('Locations.name', '=', locationsName)
+      .executeTakeFirst();
+
+    if (location) {
+      await responseMethods.addSession(location);
+    }
+    return next();
+  } catch (err) {
+    return next(err);
   }
-
-  next()
 }
