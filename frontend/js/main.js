@@ -75,7 +75,7 @@ async function fetchLeaderboard() {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
     const data = await response.json()
-    // updateLeaderboardUI(data)
+
     leaderboardData = data
   } catch (error) {
     console.error("Error fetching leaderboard:", error)
@@ -100,6 +100,7 @@ let emailInput, passwordInput, loginButton, loginMessage, session
 async function initializeSession() {
   await fetchLeaderboard()
   session = await fetchLocationsSession() // Simulate fetching session data
+  console.log(session.data.name, "session")
   populateLeaderboard()
 }
 
@@ -454,15 +455,31 @@ function showhighScoresForm({ isHighScore, playerScore }) {
   const highscoresTitle = highscores.getElementsByClassName("title")
   const highscoresContent = highscores.getElementsByClassName("content")
   const highscoreScore = highscores.getElementsByClassName("score")
+  const highscoreYetiImage = highscores.getElementsByClassName("imgYeti")
+  
   if (isHighScore) {
     Array.from(highscoresTitle)[0].textContent = "New High Score!"
-    Array.from(
+    if(session.data.name === "test") {
+      Array.from(highscoreYetiImage)[0].classList.add("hidden")
+      Array.from(
       highscoresContent
-    )[0].textContent = `Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.`
+      )[0].textContent = `You got a new high score! Thank you for playing! There is no prize for this public server.`
+    } else {
+      Array.from(
+      highscoresContent
+      )[0].textContent = `Thank you for playing! To be entered into the YETI drawing, please enter your contact information below.`
+    }
   } else {
     Array.from(highscoresTitle)[0].textContent = "Nice Try!"
-    Array.from(highscoresContent)[0].textContent =
-      " Not a new high score, but you can still enter the YETI drawing! Please enter your contact information below."
+    if(session.data.name === "test") {
+      Array.from(highscoreYetiImage)[0].classList.add("hidden")
+      Array.from(
+      highscoresContent
+      )[0].textContent = `Not a new high score. Thank you for playing! There is no prize for this public server.`
+    } else {
+      Array.from(highscoresContent)[0].textContent =
+      "Not a new high score, but you can still enter the YETI drawing! Please enter your contact information below."
+    }
   }
 
   Array.from(highscoreScore)[0].textContent = score
