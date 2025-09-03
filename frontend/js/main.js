@@ -571,6 +571,9 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 document.getElementById("captcha_form").addEventListener("submit", async function (event) {
   event.preventDefault()
 
+  const captchaContainer = document.getElementById("captcha-container")
+  const overlay = document.getElementById("overlay")
+
   const token = grecaptcha.getResponse();
   if (!token) {
     alert("Please complete the reCAPTCHA.");
@@ -588,8 +591,9 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
 
     if (data.success) {
       alert(data.message);
+      captchaContainer.classList.add("hidden")
+      overlay.classList.add("hidden")
     } else {
-      console.log("not ok", data)
       alert(data.message);
     }
   } catch (error) {
