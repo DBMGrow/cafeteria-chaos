@@ -22,7 +22,9 @@ locationsRouter.get("/session", {}, async (req, res) => {
     if (!locationsList) throw new CodedError("Location not found", 404, "LOC|02")
     locationsList.password = ""
 
-    res.success(locationsList, "Session found")
+    const recaptchaVerified = req.cookies?.recaptchaVerified === "true";
+
+    res.success({...locationsList, recaptchaVerified}, "Session found")
 })
 
 locationsRouter.get("/:location_id", {}, async (req, res) => {

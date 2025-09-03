@@ -26,6 +26,13 @@ recaptchaRouter.post("/", recaptcha.middleware.verify, async (req, res) => {
     return
   }
 
+  res.cookie("recaptchaVerified", "true", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.APP_ENV === "production",
+    maxAge: 24 * 60 * 60 * 1000
+  });
+
   res.json({ message: "Human verified.", success: "success" })
 })
 
