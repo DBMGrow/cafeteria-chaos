@@ -35,11 +35,14 @@ var boom, spliced, missed, over, start // sounds
 var timerValue = 60
 var leaderboardData = []
 let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
+let emailInput, passwordInput, loginButton, loginMessage, session
 
 const playGameContainer = document.getElementById("playGameContainer")
 const logoutButtonBody = document.getElementById("logout")
 const openDashboardButton = document.getElementById("open_dashboard")
 const fullscreenButton = document.getElementById("fullscreen-button")
+const captchaContainer = document.getElementById("captcha-container")
+const overlayBackgroundBlured = document.getElementById("overlay")
 
 function preload() {
   // LOAD SOUNDS
@@ -88,19 +91,24 @@ async function fetchLocationsSession() {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
     }
-    const session = await response.json()
-    return session
+    const data = await response.json()
+
+    session = data
   } catch (error) {
     console.error("Error fetching session:", error)
   }
 }
 
-let emailInput, passwordInput, loginButton, loginMessage, session
 
 async function initializeSession() {
+
   await fetchLeaderboard()
-  session = await fetchLocationsSession() // Simulate fetching session data
-  console.log(session.data.name, "session")
+  await fetchLocationsSession()
+
+  if (!session.data.recaptchaVerified) {
+    captchaContainer.classList.remove("hidden")
+    overlayBackgroundBlured.classList.remove("hidden")
+  }
   populateLeaderboard()
 }
 
@@ -567,6 +575,38 @@ document.getElementById("loginForm").addEventListener("submit", async function (
   }
 })
 
+ //recaptcha form submission
+document.getElementById("captcha_form").addEventListener("submit", async function (event) {
+  event.preventDefault()
+
+  const token = grecaptcha.getResponse();
+  if (!token) {
+    alert("Please complete the reCAPTCHA.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/auth/recaptcha`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({"g-recaptcha-response": token}),
+    })
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+      captchaContainer.classList.add("hidden")
+      overlayBackgroundBlured.classList.add("hidden")
+    } else {
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error("Error during reCAPTCHA verification:", error)
+    alert(error)
+  }
+})
+
 // Handle logout button click
 document.getElementById("logout-button").addEventListener("click", async function (event) {
   event.preventDefault()
@@ -799,6 +839,7 @@ window.addEventListener("DOMContentLoaded", checkOrientation)
 
 document.addEventListener("DOMContentLoaded", () => {
   const mainBodyContainer = document.getElementById("mainBodyContainer")
+  
 
   fullscreenButton.addEventListener("click", () => {
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
