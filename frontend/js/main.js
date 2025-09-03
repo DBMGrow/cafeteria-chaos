@@ -567,6 +567,37 @@ document.getElementById("loginForm").addEventListener("submit", async function (
   }
 })
 
+ //recaptcha form submission
+document.getElementById("captcha_form").addEventListener("submit", async function (event) {
+  event.preventDefault()
+
+  const token = grecaptcha.getResponse();
+  if (!token) {
+    alert("Please complete the reCAPTCHA.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`/auth/recaptcha`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({"g-recaptcha-response": token}),
+    })
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert(data.message);
+    } else {
+      console.log("not ok", data)
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error("Error during reCAPTCHA verification:", error)
+    alert(error)
+  }
+})
+
 // Handle logout button click
 document.getElementById("logout-button").addEventListener("click", async function (event) {
   event.preventDefault()

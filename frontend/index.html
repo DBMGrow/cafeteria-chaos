@@ -191,6 +191,30 @@
   </div>
       </div>
 
+    <div
+    id="captcha-container"
+      class="absolute inset-0 flex items-center justify-center z-30">
+    <div class="bg-gradient-to-b from-orange-200 to-orange-400 w-[60%] max-w-md bg-black bg-opacity-80 md:p-5 p-2 rounded-3xl">
+        <div class="relative h-12 mb-4 mt-3 px-3 flex items-center justify-center w-full">
+          <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
+          <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
+          <h1 class="title relative text-2xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">Please verify you are human</h1>
+        </div>
+        <form id="captcha_form" class="lg:space-y-4 space-y-2">
+          <div class="flex flex-col items-center">
+            <div class="inline-block text-xl font-medium border border-orange-300 bg-gradient-to-b from-orange-200 to-orange-400 px-3 py-2 rounded-xl">
+              <div id="captcha" class="g-recaptcha" data-sitekey=""></div>
+            </div>
+            </div>
+          <div class="flex gap-2 mt-2">
+            <!-- <button id="cancel" type="submit" class="w-full py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900">Confirm</button> -->
+            <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">Confirm</button>
+          </div>
+        </form>  
+  </div>
+      </div>
+
+
       <div
       id="gamerules"
       class="absolute inset-0 flex items-center justify-center z-10 hidden">
@@ -276,7 +300,7 @@
 
     </div>
 
-    <!-- <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20"></div> -->
+    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20"></div>
     <div
       id="confirm_reset"
       class="absolute space-y-1 w-96 top-60 bg-gradient-to-b from-orange-200 to-orange-400 p-5 rounded-3xl hidden z-30"
@@ -341,6 +365,13 @@
 <script type="text/javascript" src="p5/addons/p5.dom.js"></script>
 <script type="text/javascript" src="p5/addons/p5.sound.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="/config.js"></script>
+<script>
+  // Inject the site key into the widget attribute
+  const key = window.ENV?.RECAPTCHA_SITE_KEY || ""
+  document.getElementById("captcha").setAttribute("data-sitekey", key)
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
   tailwind.config = {
     theme: {
