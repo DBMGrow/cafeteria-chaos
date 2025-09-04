@@ -38,7 +38,6 @@ let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
 let emailInput, passwordInput, loginButton, loginMessage, session
 
 const playGameContainer = document.getElementById("playGameContainer")
-const logoutButtonBody = document.getElementById("logout")
 const openDashboardButton = document.getElementById("open_dashboard")
 const fullscreenButton = document.getElementById("fullscreen-button")
 const captchaContainer = document.getElementById("captcha-container")
@@ -608,27 +607,27 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
 })
 
 // Handle logout button click
-document.getElementById("logout-button").addEventListener("click", async function (event) {
-  event.preventDefault()
+// document.getElementById("logout-button").addEventListener("click", async function (event) {
+//   event.preventDefault()
 
-  try {
-    const response = await fetch(`/auth/logout`)
+//   try {
+//     const response = await fetch(`/auth/logout`)
 
-    if (response.ok) {
-      alert("Logout successful!")
-      session = null
-      document.getElementById("login-form").classList.remove("hidden")
-      ShowLogoutButton({ isHidden: 1 })
-      ShowLeaderboardButton({ isHidden: 1 })
-      drawLeaderboard({ isHidden: 1 })
-    } else {
-      alert("Logout failed. Please try again.")
-    }
-  } catch (error) {
-    console.error("Error during logout:", error)
-    alert("An error occurred. Please try again later.")
-  }
-})
+//     if (response.ok) {
+//       alert("Logout successful!")
+//       session = null
+//       document.getElementById("login-form").classList.remove("hidden")
+//       ShowLogoutButton({ isHidden: 1 })
+//       ShowLeaderboardButton({ isHidden: 1 })
+//       drawLeaderboard({ isHidden: 1 })
+//     } else {
+//       alert("Logout failed. Please try again.")
+//     }
+//   } catch (error) {
+//     console.error("Error during logout:", error)
+//     alert("An error occurred. Please try again later.")
+//   }
+// })
 
 playGameContainer.addEventListener("click", function (event) {
   // Check if the clicked element has the "playGame" class
@@ -690,13 +689,10 @@ function mouseDragged() {
 }
 
 function ShowLogoutButton({ isHidden = 0 }) {
-  const logoutButton = document.getElementById("logout")
   const gamerulesButton = document.getElementById("gamerules-button")
   if (isHidden) {
-    logoutButton.style.display = "none"
     gamerulesButton.style.display = "none"
   } else {
-    logoutButton.style.display = "block"
     gamerulesButton.style.display = "block"
   }
 }
@@ -758,11 +754,6 @@ document.getElementById("leaderboardOpenButton").addEventListener("click", funct
   const leaderboard = document.getElementById("leaderboard")
   leaderboard.style.display = "block"
 })
-
-function logout() {
-  const logout = document.getElementById("logout")
-  logout.style.display = "block"
-}
 
 // Move populateLeaderboard outside the event listener
 function populateLeaderboard() {
