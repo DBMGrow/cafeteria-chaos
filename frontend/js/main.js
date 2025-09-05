@@ -84,6 +84,20 @@ async function fetchLeaderboard() {
   }
 }
 
+async function fetchSearchLocation(query) {
+  try {
+    const response = await fetch(`/locations/googlesearch?search=${encodeURIComponent(query)}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Search results:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching search location:", error);
+  }
+}
+
 async function fetchLocationsSession() {
   try {
     const response = await fetch(`/locations/session`)
@@ -605,6 +619,35 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
     alert(error)
   }
 })
+
+document.getElementById("search_query").addEventListener("input", async function (event) {
+  event.preventDefault();
+  const query = event.target.value;
+  if (!query) return;
+
+  // Fetch search results from backend
+  const {data} = await fetchSearchLocation(query);
+console.log(data)
+
+  const resultsContainer = document.getElementById("search_list");
+  resultsContainer.innerHTML = ""; 
+
+  if (data && data.length > 0) {
+    data.forEach((item) => {
+      const {mainText} = item.structuredFormat
+      const {secondaryText} = item.structuredFormat
+
+      const div = document.createElement("div");
+      div.className = "search-result-item";
+      div.innerHTML = `
+      <p id="mainText" class="text-lg font-medium">${mainText.text || ""}</p>
+      <p id="secondaryText">${secondaryText.text || ""}</p>`
+      resultsContainer.appendChild(div);
+    });
+  } else {
+    resultsContainer.innerHTML = "<div>No results found.</div>";
+  }
+});
 
 // Handle logout button click
 // document.getElementById("logout-button").addEventListener("click", async function (event) {

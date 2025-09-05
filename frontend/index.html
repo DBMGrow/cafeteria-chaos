@@ -214,8 +214,8 @@
 
     <div
     id=""
-      class="absolute inset-0 flex items-center justify-center z-30">
-    <div class="bg-gradient-to-b from-orange-200 to-orange-400 w-[60%] max-w-md bg-black bg-opacity-80 md:p-5 p-2 rounded-3xl">
+      class="absolute inset-0 w-full flex items-center justify-center z-30">
+    <div class="bg-gradient-to-b from-orange-200 to-orange-400 w-[80%] bg-black bg-opacity-80 md:p-5 p-2 rounded-3xl">
         <div class="relative h-12 mb-4 mt-3 px-3 flex items-center justify-center w-full">
           <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
           <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
@@ -223,7 +223,18 @@
         </div>
         <form id="google_search_form" class="lg:space-y-4 space-y-2">
             <div class="flex flex-col gap-2 mt-2">
-            <div id="google_search" class="">asdasdaasda</div>
+            <!-- <div id="google_search" class="">asdasdaasda</div> -->
+             <div class="">
+            <input type="text" id="search_query" placeholder="Search..." class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300" />
+            <div class="relative">
+              <div id="search_list" class="absolute w-full top-0 flex flex-col gap-1 text-sm text-gray-700 bg-orange-200 border border-orange-600 rounded font-medium lg:text-center">
+                <div id="" class="px-2 text-start border-b border-orange-400 bg-orange-300 rounded-t">
+                  <p id="mainText" class="text-lg font-medium">qweqweqw</p>
+                  <p id="secondaryText">asasd asdasd asdasd asda asd</p>
+                </div>
+              </div>
+            </div>          
+          </div>
             <!-- <button id="cancel" type="submit" class="w-full py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900">Confirm</button> -->
             <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">Confirm</button>
             </div>
@@ -374,75 +385,7 @@
       </div>
     </div>
 
-    <p style="font-family: roboto, sans-serif; color: #fffdfd;">Search for a place here:</p>
 
-    <!-- prettier-ignore -->
-
-    <script>
-      async function initMap() {
-        // Request needed libraries.
-        await google.maps.importLibrary("places");
-
-        // Create the input HTML element, and append it.
-        //@ts-ignore
-        const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement();
-        
-        document.getElementById("google_search").appendChild(placeAutocomplete);
-        
-        // const selectedPlaceTitle = document.createElement('p');
-        //  selectedPlaceTitle.textContent = '';
-        //  document.getElementById("google_search").appendChild(selectedPlaceTitle);
-        
-        // Add the gmp-placeselect listener, and display the results.
-        //@ts-ignore
-        placeAutocomplete.addEventListener('gmp-select', async ({ placePrediction }) => {
-          const place = placePrediction.toPlace();
-          await place.fetchFields({ fields: ['*'] });
-          await place.fetchFields({ fields: ['displayName', 'formattedAddress', 'location'] });
-          // selectedPlaceTitle.textContent = 'Selected Place:';
-          
-          // console.log(place.toJSON());
-          console.log(place.toJSON(), place.location.toJSON(), place.displayName, place.formattedAddress);
-        });
-      }
-
-      initMap();
-      </script>
-
-
-
- <script>(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})
-     ({key: "", v: "weekly"});</script>
-
-<!-- <script>
-  (g => {
-    var h, a, k, p = "The Google Maps JavaScript API",
-      c = "google",
-      l = "importLibrary",
-      q = "__ib__",
-      m = document,
-      b = window;
-    b = b[c] || (b[c] = {});
-    var d = b.maps || (b.maps = {}),
-      r = new Set,
-      e = new URLSearchParams,
-      u = () => h || (h = new Promise(async (f, n) => {
-        await (a = m.createElement("script"));
-        e.set("libraries", [...r] + "");
-        for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]);
-        e.set("callback", c + ".maps." + q);
-        a.src = `https://maps.${c}apis.com/maps/api/js?` + e;
-        d[q] = f;
-        a.onerror = () => h = n(Error(p + " could not load."));
-        a.nonce = m.querySelector("script[nonce]")?.nonce || "";
-        m.head.append(a);
-      }));
-    d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n));
-  })({
-    key: "",
-    v: "weekly"
-  });
-</script> -->
 <!-- P5.js and jQuery Libraries -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>

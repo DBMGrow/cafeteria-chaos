@@ -10,16 +10,16 @@ locationsRouter.get("/", {}, async (req, res) => {
     res.success(locationsList, "Locations retrieved successfully")
 })
 
-locationsRouter.get("/search", {}, async (req, res) => {
-  const { query, sessionToken } = req.body || {};
+locationsRouter.get("/googlesearch", {}, async (req, res) => {
+  const { search } = req.query || {};
 
   const body = {
-    input: query,
+    input: search,
   };
 
   const resp = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
     method: "POST",
-    headers: { "Content-Type":"application/json", "X-Goog-Api-Key": process.env.MAPS_API_KEY || "", "X-Goog-FieldMask": "*" },
+    headers: { "Content-Type":"application/json", "X-Goog-Api-Key": process.env.MAPS_API_KEY || ""},
     body: JSON.stringify(body),
   });
 
