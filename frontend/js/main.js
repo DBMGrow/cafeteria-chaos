@@ -635,7 +635,7 @@ function renderGoogleSearchList(items) {
     searchList.innerHTML = `<div class="px-3 py-2 text-gray-600">No results found.</div>`;
     return;
   }
-console.log("first", items)
+
   const frag = document.createDocumentFragment();
 
   items.forEach((item, idx) => {
@@ -661,6 +661,22 @@ console.log("first", items)
   });
 
   searchList.appendChild(frag);
+}
+
+function selectItem(idx) {
+  const searchList  = document.getElementById("search_list");
+  const searchQuery = document.getElementById("search_query");
+  const item = currentItems[idx];
+  if (!item) return;
+
+  const mainText = item?.structuredFormat?.mainText?.text ?? "";
+  searchQuery.value = mainText; // put selected label into the input
+
+  // If you want to store the chosen placeId for submit:
+  searchQuery.dataset.placeId = item?.placeId ?? "";
+
+  searchList.classList.add("hidden");
+  searchQuery.setAttribute("aria-expanded", "false");
 }
 
 const debouncedGoogleSearch = debounce(async (query) => {
