@@ -689,14 +689,12 @@ const debouncedGoogleSearch = debounce(async (query) => {
   renderGoogleSearchList(currentItems);
   searchList.classList.remove("hidden");
   searchQuery.setAttribute("aria-expanded", "true");
-  // showList();
 } catch (e) {
   console.error("Search error:", e);
   currentItems = [];
   renderGoogleSearchList(currentItems);
   searchList.classList.remove("hidden");
   searchQuery.setAttribute("aria-expanded", "true");
-  // showList();
 }
 }, 250);
 
@@ -716,34 +714,22 @@ document.getElementById("search_query").addEventListener("input", async function
   debouncedGoogleSearch(query);
 });
 
-// document.getElementById("search_query").addEventListener("input", async function (event) {
-//   event.preventDefault();
-//   const query = event.target.value;
-//   if (!query) return;
 
-//   // Fetch search results from backend
-//   const {data} = await fetchSearchLocation(query);
-// console.log(data)
 
-//   const resultsContainer = document.getElementById("search_list");
-//   resultsContainer.innerHTML = ""; 
+document.getElementById("google_search_form").addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const searchQuery = document.getElementById("search_query");
+  const q = searchQuery.value.trim();
+  const placeId = searchQuery.dataset.placeId || "";
 
-//   if (data && data.length > 0) {
-//     data.forEach((item) => {
-//       const {mainText} = item.structuredFormat
-//       const {secondaryText} = item.structuredFormat
+  console.log("Submit:", { q, placeId });
 
-//       const div = document.createElement("div");
-//       div.className = "search-result-item";
-//       div.innerHTML = `
-//       <p id="mainText" class="text-lg font-medium">${mainText.text || ""}</p>
-//       <p id="secondaryText">${secondaryText.text || ""}</p>`
-//       resultsContainer.appendChild(div);
-//     });
-//   } else {
-//     resultsContainer.innerHTML = "<div>No results found.</div>";
-//   }
-// });
+  const url = new URL(window.location.href);
+  url.searchParams.set("lb", placeId ?? "");
+  window.location.href = url;
+  await initializeSession();
+});
+
 
 // Handle logout button click
 // document.getElementById("logout-button").addEventListener("click", async function (event) {
