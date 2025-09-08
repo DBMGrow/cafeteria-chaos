@@ -46,7 +46,7 @@
 
   <body
   id="mainBodyContainer"
-    class="flex flex-col 1xl:pt-8 items-center justify-start min-h-screen bg-white bg-cover bg-center bg-no-repeat backdrop-blur-sm overflow-hidden"
+    class="flex flex-col 1xl:pt-8 items-center justify-start min-h-screen bg-black bg-cover bg-center bg-no-repeat backdrop-blur-sm overflow-hidden"
   >
 
     <div class="">
@@ -212,34 +212,46 @@
   </div>
       </div>
 
-    <div
-    id=""
-      class="absolute inset-0 w-full flex items-center justify-center z-30">
-    <div class="bg-gradient-to-b from-orange-200 to-orange-400 w-[80%] bg-black bg-opacity-80 md:p-5 p-2 rounded-3xl">
-        <div class="relative h-12 mb-4 mt-3 px-3 flex items-center justify-center w-full">
-          <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
-          <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
-          <h1 class="title relative text-2xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">Search your school place!</h1>
-        </div>
-        <form id="google_search_form" class="lg:space-y-4 space-y-2">
+      <div class="absolute inset-0 w-full flex items-center justify-center z-30">
+        <div class="bg-gradient-to-b from-orange-200 to-orange-400 w-[80%] md:p-5 p-2 rounded-3xl">
+          <div class="relative h-12 mb-4 mt-3 px-3 flex items-center justify-center w-full">
+            <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
+            <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
+            <h1 class="title relative text-2xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">
+              Search your school place!
+            </h1>
+          </div>
+      
+          <form id="google_search_form" class="lg:space-y-4 space-y-2" autocomplete="off">
             <div class="flex flex-col gap-2 mt-2">
-            <!-- <div id="google_search" class="">asdasdaasda</div> -->
-             <div class="">
-            <input type="text" id="search_query" placeholder="Search..." class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300" />
-            <div class="relative">
-              <div id="search_list" class="absolute w-full top-0 flex flex-col gap-1 text-sm text-gray-700 bg-orange-200 border border-orange-600 rounded font-medium lg:text-center">
-                <div id="" class="px-2 text-start border-b border-orange-400 bg-orange-300 rounded-t">
-                  <p id="mainText" class="text-lg font-medium">qweqweqw</p>
-                  <p id="secondaryText">asasd asdasd asdasd asda asd</p>
+              <div>
+                <input
+                  type="text"
+                  id="search_query"
+                  placeholder="Search..."
+                  class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-controls="search_list"
+                  aria-expanded="false"
+                />
+      
+                <!-- Results dropdown -->
+                <div class="relative">
+                  <div
+                    id="search_list"
+                    class="absolute w-full top-0 mt-0.5 max-h-64 overflow-auto flex flex-col gap-0 text-sm text-gray-800 bg-gradient-to-r from-orange-200 to-orange-300 border border-orange-600 rounded-xl font-medium shadow hidden"
+                    role="listbox"
+                  ></div>
                 </div>
               </div>
-            </div>          
-          </div>
-            <!-- <button id="cancel" type="submit" class="w-full py-2 bg-gray-800 text-white rounded-xl hover:bg-gray-900">Confirm</button> -->
-            <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">Confirm</button>
+      
+              <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">
+                Confirm
+              </button>
             </div>
-        </form>  
-  </div>
+          </form>
+        </div>
       </div>
 
 
@@ -413,9 +425,9 @@
 </script>
 
 <!-- Custom JavaScript Files -->
-<script src="./js/main.js"></script>
 <script src="./js/swords.js"></script>
 <script src="./js/fruit.js"></script>
 <script src="./js/confetti.js"></script>
+<script src="./js/main.js"></script>
 </body>
 </html>

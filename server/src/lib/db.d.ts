@@ -18,6 +18,7 @@ export interface Highscores {
 export interface Locations {
   api_key: string;
   created_at: Generated<Date | null>;
+  google_place_id: string | null;
   location_id: Generated<number>;
   location_type: "admin" | "user";
   name: string;

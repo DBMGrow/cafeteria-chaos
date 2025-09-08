@@ -70,6 +70,14 @@ function preload() {
   scoreImg = loadImage("images/apple.png")
 }
 
+function debounce(fn, delay = 250) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), delay);
+  };
+}
+
 async function fetchLeaderboard() {
   try {
     const response = await fetch(`/highscores`)
@@ -620,34 +628,106 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
   }
 })
 
+function renderGoogleSearchList(items) {
+  const searchList  = document.getElementById("search_list");
+  searchList.innerHTML = "";
+  if (!items || items.length === 0) {
+    searchList.innerHTML = `<div class="px-3 py-2 text-gray-600">No results found.</div>`;
+    return;
+  }
+console.log("first", items)
+  const frag = document.createDocumentFragment();
+
+  items.forEach((item, idx) => {
+    const mainText = item?.structuredFormat?.mainText?.text ?? "";
+    const secondaryText = item?.structuredFormat?.secondaryText?.text ?? "";
+    const placeId = item?.placeId ?? "";
+
+    const option = document.createElement("div");
+    option.className = "px-3 py-2 cursor-pointer hover:bg-orange-400 focus:bg-orange-200 outline-none";
+    option.setAttribute("role", "option");
+    option.setAttribute("tabindex", "-1");
+    option.dataset.index = String(idx);
+    option.dataset.placeId = placeId;
+
+    option.innerHTML = `
+      <p class="text-base font-semibold leading-tight">${mainText}</p>
+      <p class="text-xs text-gray-700">${secondaryText}</p>
+    `;
+
+    option.addEventListener("click", () => selectItem(idx));
+
+    frag.appendChild(option);
+  });
+
+  searchList.appendChild(frag);
+}
+
+const debouncedGoogleSearch = debounce(async (query) => {
+  const searchList  = document.getElementById("search_list");
+  const searchQuery = document.getElementById("search_query");
+  try{
+  const data = await fetchSearchLocation(query);
+  currentItems = Array.isArray(data.data) ? data.data : [];
+  console.log(data, currentItems, "elements")
+  renderGoogleSearchList(currentItems);
+  searchList.classList.remove("hidden");
+  searchQuery.setAttribute("aria-expanded", "true");
+  // showList();
+} catch (e) {
+  console.error("Search error:", e);
+  currentItems = [];
+  renderGoogleSearchList(currentItems);
+  searchList.classList.remove("hidden");
+  searchQuery.setAttribute("aria-expanded", "true");
+  // showList();
+}
+}, 250);
+
+
 document.getElementById("search_query").addEventListener("input", async function (event) {
   event.preventDefault();
+  const searchList  = document.getElementById("search_list");
+  const searchQuery = document.getElementById("search_query");
   const query = event.target.value;
-  if (!query) return;
+  if (!query) {
+    searchList.innerHTML = "";
+    searchList.classList.add("hidden");
+    searchQuery.setAttribute("aria-expanded", "false");
+    return
+  };
 
-  // Fetch search results from backend
-  const {data} = await fetchSearchLocation(query);
-console.log(data)
-
-  const resultsContainer = document.getElementById("search_list");
-  resultsContainer.innerHTML = ""; 
-
-  if (data && data.length > 0) {
-    data.forEach((item) => {
-      const {mainText} = item.structuredFormat
-      const {secondaryText} = item.structuredFormat
-
-      const div = document.createElement("div");
-      div.className = "search-result-item";
-      div.innerHTML = `
-      <p id="mainText" class="text-lg font-medium">${mainText.text || ""}</p>
-      <p id="secondaryText">${secondaryText.text || ""}</p>`
-      resultsContainer.appendChild(div);
-    });
-  } else {
-    resultsContainer.innerHTML = "<div>No results found.</div>";
-  }
+  debouncedGoogleSearch(query);
 });
+
+// document.getElementById("search_query").addEventListener("input", async function (event) {
+//   event.preventDefault();
+//   const query = event.target.value;
+//   if (!query) return;
+
+//   // Fetch search results from backend
+//   const {data} = await fetchSearchLocation(query);
+// console.log(data)
+
+//   const resultsContainer = document.getElementById("search_list");
+//   resultsContainer.innerHTML = ""; 
+
+//   if (data && data.length > 0) {
+//     data.forEach((item) => {
+//       const {mainText} = item.structuredFormat
+//       const {secondaryText} = item.structuredFormat
+
+//       const div = document.createElement("div");
+//       div.className = "search-result-item";
+//       div.innerHTML = `
+//       <p id="mainText" class="text-lg font-medium">${mainText.text || ""}</p>
+//       <p id="secondaryText">${secondaryText.text || ""}</p>`
+//       resultsContainer.appendChild(div);
+//     });
+//   } else {
+//     resultsContainer.innerHTML = "<div>No results found.</div>";
+//   }
+// });
 
 // Handle logout button click
 // document.getElementById("logout-button").addEventListener("click", async function (event) {
