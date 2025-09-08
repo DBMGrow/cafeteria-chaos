@@ -655,7 +655,7 @@ function renderGoogleSearchList(items) {
       <p class="text-xs text-gray-700">${secondaryText}</p>
     `;
 
-    option.addEventListener("click", () => selectItem(idx));
+    option.addEventListener("click", () => selectedGoogleSearch(idx));
 
     frag.appendChild(option);
   });
@@ -663,7 +663,7 @@ function renderGoogleSearchList(items) {
   searchList.appendChild(frag);
 }
 
-function selectItem(idx) {
+function selectedGoogleSearch(idx) {
   const searchList  = document.getElementById("search_list");
   const searchQuery = document.getElementById("search_query");
   const item = currentItems[idx];
