@@ -132,6 +132,28 @@ export class ResponseMethods {
     this.res.cookie("_locationType", "", cookieOptions) 
     this.res.cookie("_locationID", "", cookieOptions)  
   }
+
+  async validPlaceId(placeId: string) {
+    if (!placeId) return false;
+
+    try {
+      const resp = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": "*",
+          "X-Goog-Api-Key": process.env.MAPS_API_KEY || ""
+        }
+      });
+
+      const body = await resp.json();
+
+      if (!resp.ok) return false;
+      return body
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 class Router {

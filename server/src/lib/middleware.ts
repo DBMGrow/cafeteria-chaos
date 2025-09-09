@@ -14,11 +14,18 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction)  =>
   const rawLb = Array.isArray((req as any).query?.lb) ? (req as any).query.lb[0] : (req as any).query?.lb;
   let locationsName = rawLb || 'test';
 
+  const isValidPlaceId = await responseMethods.validPlaceId(locationsName);
+
+  if (!isValidPlaceId && locationsName !== 'test') {
+    console.log(78686)
+    responseMethods.removeSession();
+    return next();
+  }
 
     let location = await db
       .selectFrom('Locations')
       .selectAll()
-      .where('Locations.name', '=', locationsName)
+      .where('Locations.google_place_id', '=', locationsName)
       .executeTakeFirst();
 
     //if location is not found, fallback to 'test' location
@@ -26,7 +33,7 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction)  =>
       location = await db
         .selectFrom('Locations')
         .selectAll()
-        .where('Locations.name', '=', 'test')
+        .where('Locations.google_place_id', '=', 'base')
         .executeTakeFirst();
     }
 

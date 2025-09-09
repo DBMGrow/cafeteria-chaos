@@ -42,6 +42,7 @@ const googleSearchModal = document.getElementById("google_search_modal")
 const openDashboardButton = document.getElementById("open_dashboard")
 const fullscreenButton = document.getElementById("fullscreen-button")
 const captchaContainer = document.getElementById("captcha-container")
+const notAuthorizedModal = document.getElementById("not_authorized")
 const overlayBackgroundBlured = document.getElementById("overlay")
 
 function preload() {
@@ -127,10 +128,16 @@ async function initializeSession() {
   await fetchLeaderboard()
   await fetchLocationsSession()
 
+  if (!session) {
+    notAuthorizedModal.classList.remove("hidden")
+    overlayBackgroundBlured.classList.remove("hidden")
+  }
+
   if (!session.data.recaptchaVerified) {
     captchaContainer.classList.remove("hidden")
     overlayBackgroundBlured.classList.remove("hidden")
   }
+
   populateLeaderboard()
 }
 
