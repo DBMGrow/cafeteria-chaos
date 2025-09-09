@@ -38,6 +38,7 @@ let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
 let emailInput, passwordInput, loginButton, loginMessage, session
 
 const playGameContainer = document.getElementById("playGameContainer")
+const googleSearchModal = document.getElementById("google_search_modal")
 const openDashboardButton = document.getElementById("open_dashboard")
 const fullscreenButton = document.getElementById("fullscreen-button")
 const captchaContainer = document.getElementById("captcha-container")
@@ -815,9 +816,12 @@ function mouseDragged() {
 
 function ShowLogoutButton({ isHidden = 0 }) {
   const gamerulesButton = document.getElementById("gamerules-button")
+  const googleSearchButton = document.getElementById("google_search_button")
   if (isHidden) {
+    googleSearchButton.style.display = "none"
     gamerulesButton.style.display = "none"
   } else {
+    googleSearchButton.style.display = "block"
     gamerulesButton.style.display = "block"
   }
 }
@@ -856,22 +860,11 @@ function drawLeaderboard({ isHidden = 0 }) {
   }
 }
 
-//close leaderboard button
-document.getElementById("leaderboardCloseButton").addEventListener("click", function (event) {
-  const leaderboard = document.getElementById("leaderboard")
-  leaderboard.style.display = "none"
-})
 //open gamerules modal
 document.getElementById("gamerules-button").addEventListener("click", function (event) {
   const gamerules = document.getElementById("gamerules")
-
+  
   gamerules.classList.remove("hidden")
-})
-//closse gamerules modal
-document.getElementById("gamerulesCloseButton").addEventListener("click", function (event) {
-  const gamerules = document.getElementById("gamerules")
-console.log("first")
-  gamerules.classList.add("hidden")
 })
 
 //open leaderboard button
@@ -879,6 +872,29 @@ document.getElementById("leaderboardOpenButton").addEventListener("click", funct
   const leaderboard = document.getElementById("leaderboard")
   leaderboard.style.display = "block"
 })
+
+//open google search modal
+document.getElementById("open_google_search_button").addEventListener("click", function (event) {
+  googleSearchModal.classList.remove("hidden")
+})
+
+//close leaderboard button
+document.getElementById("leaderboardCloseButton").addEventListener("click", function (event) {
+  const leaderboard = document.getElementById("leaderboard")
+  leaderboard.style.display = "none"
+})
+
+//closse gamerules modal
+document.getElementById("gamerulesCloseButton").addEventListener("click", function (event) {
+  const gamerules = document.getElementById("gamerules")
+  gamerules.classList.add("hidden")
+})
+
+//closse google search modal
+document.getElementById("close_google_search").addEventListener("click", function (event) {
+  googleSearchModal.classList.add("hidden")
+})
+
 
 // Move populateLeaderboard outside the event listener
 function populateLeaderboard() {
