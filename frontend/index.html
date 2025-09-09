@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Cafeteria Chaos</title>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
 
     <!-- STYLE -->
     <style>
@@ -85,6 +86,13 @@
           >
           <button id="leaderboardOpenButton" class="w-full py-2 font-medium bg-orange-500 text-orange-100 rounded-xl hover:bg-orange-600 w-20">
             Leaderboard
+          </button>
+        </div>
+          <div id="google_search_button"
+          class="bg-gradient-to-b from-orange-200 to-orange-400 p-3 rounded-3xl w-32 hidden"
+          >
+          <button id="open_google_search_button" class="w-full py-2 font-medium bg-orange-500 text-orange-100 rounded-xl hover:bg-orange-600 w-20">
+            Search Place
           </button>
         </div>
       </div>
@@ -209,6 +217,54 @@
           </div>
         </form>  
   </div>
+      </div>
+
+      <div id="google_search_modal" class="absolute inset-0 w-full flex items-center justify-center z-30 hidden">
+          <div class="relative bg-gradient-to-b from-orange-200 to-orange-400 w-[80%] md:p-5 p-2 rounded-3xl">
+          <button id="close_google_search" class="absolute top-3 right-1 text-orange-500 hover:text-orange-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+           </button>
+          <div class="relative h-12 mb-4 mt-3 px-3 flex items-center justify-center w-full">
+            <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
+            <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
+            <h1 class="title relative text-2xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">
+              Search your school place!
+            </h1>
+          </div>
+      
+          <form id="google_search_form" class="lg:space-y-4 space-y-2" autocomplete="off">
+            <div class="flex flex-col gap-2 mt-2">
+              <div>
+                <input
+                  type="text"
+                  id="search_query"
+                  placeholder="Search..."
+                  class="w-full h-10 mb-2 p-2 rounded-xl border border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-gradient-to-r from-orange-200 to-orange-300"
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-controls="search_list"
+                  aria-expanded="false"
+                />
+      
+                <!-- Results dropdown -->
+                <div class="relative">
+                  <div
+                    id="search_list"
+                    class="absolute w-full top-0 mt-0.5 max-h-64 overflow-auto flex flex-col gap-0 text-sm text-gray-800 bg-gradient-to-r from-orange-200 to-orange-300 border border-orange-600 rounded-xl font-medium shadow hidden"
+                    role="listbox"
+                  ></div>
+                </div>
+              </div>
+      
+              <button type="submit" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">
+                Confirm
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
 
@@ -382,9 +438,9 @@
 </script>
 
 <!-- Custom JavaScript Files -->
-<script src="./js/main.js"></script>
 <script src="./js/swords.js"></script>
 <script src="./js/fruit.js"></script>
 <script src="./js/confetti.js"></script>
+<script src="./js/main.js"></script>
 </body>
 </html>

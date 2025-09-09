@@ -38,6 +38,7 @@ let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
 let emailInput, passwordInput, loginButton, loginMessage, session
 
 const playGameContainer = document.getElementById("playGameContainer")
+const googleSearchModal = document.getElementById("google_search_modal")
 const openDashboardButton = document.getElementById("open_dashboard")
 const fullscreenButton = document.getElementById("fullscreen-button")
 const captchaContainer = document.getElementById("captcha-container")
@@ -70,6 +71,14 @@ function preload() {
   scoreImg = loadImage("images/apple.png")
 }
 
+function debounce(fn, delay = 250) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), delay);
+  };
+}
+
 async function fetchLeaderboard() {
   try {
     const response = await fetch(`/highscores`)
@@ -81,6 +90,20 @@ async function fetchLeaderboard() {
     leaderboardData = data
   } catch (error) {
     console.error("Error fetching leaderboard:", error)
+  }
+}
+
+async function fetchSearchLocation(query) {
+  try {
+    const response = await fetch(`/locations/googlesearch?search=${encodeURIComponent(query)}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log("Search results:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching search location:", error);
   }
 }
 
@@ -606,6 +629,109 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
   }
 })
 
+function renderGoogleSearchList(items) {
+  const searchList  = document.getElementById("search_list");
+  searchList.innerHTML = "";
+  if (!items || items.length === 0) {
+    searchList.innerHTML = `<div class="px-3 py-2 text-gray-600">No results found.</div>`;
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+
+  items.forEach((item, idx) => {
+    const mainText = item?.structuredFormat?.mainText?.text ?? "";
+    const secondaryText = item?.structuredFormat?.secondaryText?.text ?? "";
+    const placeId = item?.placeId ?? "";
+
+    const option = document.createElement("div");
+    option.className = "px-3 py-2 cursor-pointer hover:bg-orange-400 focus:bg-orange-200 outline-none";
+    option.setAttribute("role", "option");
+    option.setAttribute("tabindex", "-1");
+    option.dataset.index = String(idx);
+    option.dataset.placeId = placeId;
+
+    option.innerHTML = `
+      <p class="text-base font-semibold leading-tight">${mainText}</p>
+      <p class="text-xs text-gray-700">${secondaryText}</p>
+    `;
+
+    option.addEventListener("click", () => selectedGoogleSearch(idx));
+
+    frag.appendChild(option);
+  });
+
+  searchList.appendChild(frag);
+}
+
+function selectedGoogleSearch(idx) {
+  const searchList  = document.getElementById("search_list");
+  const searchQuery = document.getElementById("search_query");
+  const item = currentItems[idx];
+  if (!item) return;
+
+  const mainText = item?.structuredFormat?.mainText?.text ?? "";
+  searchQuery.value = mainText; // put selected label into the input
+
+  // If you want to store the chosen placeId for submit:
+  searchQuery.dataset.placeId = item?.placeId ?? "";
+
+  searchList.classList.add("hidden");
+  searchQuery.setAttribute("aria-expanded", "false");
+}
+
+const debouncedGoogleSearch = debounce(async (query) => {
+  const searchList  = document.getElementById("search_list");
+  const searchQuery = document.getElementById("search_query");
+  try{
+  const data = await fetchSearchLocation(query);
+  currentItems = Array.isArray(data.data) ? data.data : [];
+  console.log(data, currentItems, "elements")
+  renderGoogleSearchList(currentItems);
+  searchList.classList.remove("hidden");
+  searchQuery.setAttribute("aria-expanded", "true");
+} catch (e) {
+  console.error("Search error:", e);
+  currentItems = [];
+  renderGoogleSearchList(currentItems);
+  searchList.classList.remove("hidden");
+  searchQuery.setAttribute("aria-expanded", "true");
+}
+}, 250);
+
+
+document.getElementById("search_query").addEventListener("input", async function (event) {
+  event.preventDefault();
+  const searchList  = document.getElementById("search_list");
+  const searchQuery = document.getElementById("search_query");
+  const query = event.target.value;
+  if (!query) {
+    searchList.innerHTML = "";
+    searchList.classList.add("hidden");
+    searchQuery.setAttribute("aria-expanded", "false");
+    return
+  };
+
+  debouncedGoogleSearch(query);
+});
+
+
+
+document.getElementById("google_search_form").addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const searchQuery = document.getElementById("search_query");
+  const q = searchQuery.value.trim();
+  const placeId = searchQuery.dataset.placeId || "";
+
+  console.log("Submit:", { q, placeId });
+
+  const url = new URL(window.location.href);
+  url.searchParams.set("lb", placeId ?? "");
+  window.location.href = url;
+  await initializeSession();
+});
+
+
 // Handle logout button click
 // document.getElementById("logout-button").addEventListener("click", async function (event) {
 //   event.preventDefault()
@@ -690,9 +816,12 @@ function mouseDragged() {
 
 function ShowLogoutButton({ isHidden = 0 }) {
   const gamerulesButton = document.getElementById("gamerules-button")
+  const googleSearchButton = document.getElementById("google_search_button")
   if (isHidden) {
+    googleSearchButton.style.display = "none"
     gamerulesButton.style.display = "none"
   } else {
+    googleSearchButton.style.display = "block"
     gamerulesButton.style.display = "block"
   }
 }
@@ -731,22 +860,11 @@ function drawLeaderboard({ isHidden = 0 }) {
   }
 }
 
-//close leaderboard button
-document.getElementById("leaderboardCloseButton").addEventListener("click", function (event) {
-  const leaderboard = document.getElementById("leaderboard")
-  leaderboard.style.display = "none"
-})
 //open gamerules modal
 document.getElementById("gamerules-button").addEventListener("click", function (event) {
   const gamerules = document.getElementById("gamerules")
-
+  
   gamerules.classList.remove("hidden")
-})
-//closse gamerules modal
-document.getElementById("gamerulesCloseButton").addEventListener("click", function (event) {
-  const gamerules = document.getElementById("gamerules")
-console.log("first")
-  gamerules.classList.add("hidden")
 })
 
 //open leaderboard button
@@ -754,6 +872,29 @@ document.getElementById("leaderboardOpenButton").addEventListener("click", funct
   const leaderboard = document.getElementById("leaderboard")
   leaderboard.style.display = "block"
 })
+
+//open google search modal
+document.getElementById("open_google_search_button").addEventListener("click", function (event) {
+  googleSearchModal.classList.remove("hidden")
+})
+
+//close leaderboard button
+document.getElementById("leaderboardCloseButton").addEventListener("click", function (event) {
+  const leaderboard = document.getElementById("leaderboard")
+  leaderboard.style.display = "none"
+})
+
+//closse gamerules modal
+document.getElementById("gamerulesCloseButton").addEventListener("click", function (event) {
+  const gamerules = document.getElementById("gamerules")
+  gamerules.classList.add("hidden")
+})
+
+//closse google search modal
+document.getElementById("close_google_search").addEventListener("click", function (event) {
+  googleSearchModal.classList.add("hidden")
+})
+
 
 // Move populateLeaderboard outside the event listener
 function populateLeaderboard() {
