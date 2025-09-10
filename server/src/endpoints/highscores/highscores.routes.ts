@@ -64,7 +64,6 @@ highscoresRouter.post("/", {}, async (req, res) => {
     }
 
     if (placeId && placeId !== 'test' && placeId !== session.google_place_id) {
-      console.log("hlello", placeId)
       const placeIdvalidated = await res.validPlaceId(String(placeId));
       if (!placeIdvalidated) {
         return res.status(400).success({ success: false, message: "Invalid location" })
@@ -95,11 +94,10 @@ highscoresRouter.post("/", {}, async (req, res) => {
     const emailExist = await db.selectFrom("Highscores").where("email", "=", email).where("location_id", "=", body.location_id).selectAll().executeTakeFirst()
 
     if (emailExist?.email) {
-      await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).execute()
+      await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).where("location_id", "=", body.location_id).execute()
       return res.status(200).success({ success: true, message: "Highscore updated successfully" })
     }
 
-console.log(body, 'body123456')
     await db.insertInto("Highscores").values(body).onDuplicateKeyUpdate({email}).execute()
 
     // Send the new high score to Zapier
