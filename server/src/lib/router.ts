@@ -133,7 +133,7 @@ export class ResponseMethods {
     this.res.cookie("_locationID", "", cookieOptions)  
   }
 
-  async validPlaceId(placeId: string) {
+  async validPlaceId(placeId: string): Promise<boolean | any> {
     if (!placeId) return false;
 
     try {
@@ -177,6 +177,7 @@ class Router {
         res.error = responseMethods.error.bind(responseMethods)
         res.addSession = responseMethods.addSession.bind(responseMethods)
         res.removeSession = responseMethods.removeSession.bind(responseMethods)
+        res.validPlaceId = responseMethods.validPlaceId.bind(responseMethods)
 
         await handler(req, res, next)
       } catch (error: any) {

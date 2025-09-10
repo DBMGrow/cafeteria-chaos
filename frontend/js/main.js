@@ -530,7 +530,8 @@ function showhighScoresForm({ isHighScore, playerScore }) {
     const first_name = event.target.querySelector("#first_name").value
     const last_name = event.target.querySelector("#last_name").value
     const clickedButton = event.submitter
-    console.log(`Button pressed: ${clickedButton.id}`) // Log the button's id
+    const urlParams = new URLSearchParams(window.location.search);
+    const placeId = urlParams.get("lb");
 
     if (clickedButton.id === "cancel") {
       console.log("Cancel button pressed")
@@ -546,7 +547,7 @@ function showhighScoresForm({ isHighScore, playerScore }) {
           return
         }
 
-        const response = await fetch(`/highscores`, {
+        const response = await fetch(`/highscores?placeId=${placeId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, score, first_name, last_name }),

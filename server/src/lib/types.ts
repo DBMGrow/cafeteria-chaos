@@ -35,6 +35,7 @@ export interface Res extends Response {
   success: <T>(data: T, message?: string, pages?: PagesResponse, flattenBody?: boolean) => void
   addSession: (user: Session) => Promise<void>
   removeSession: () => void
+  validPlaceId: (placeId: string) => Promise<boolean | any>
   onFinish: (name: string, callback: () => Promise<void>) => Promise<void>
   log: (...args: [...message: LogMessage[], config: LogConfig]) => void
   _finishCallbacks: {
