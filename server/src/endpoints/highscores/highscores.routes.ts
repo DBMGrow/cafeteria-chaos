@@ -61,7 +61,7 @@ highscoresRouter.post("/", {}, async (req, res) => {
       ...req.body,
       location_id: session.location_id,
     }
-console.log(placeId, 'placeId123456')
+
     if (placeId && placeId !== 'test' && placeId !== session.google_place_id) {
       console.log("hlello", placeId)
       const placeIdvalidated = await res.validPlaceId(String(placeId));
@@ -69,7 +69,7 @@ console.log(placeId, 'placeId123456')
         return res.status(400).success({ success: false, message: "Invalid location" })
       }
 
-      const newLocation = {
+      const newLocationData = {
         name: placeIdvalidated?.formattedAddress,
         password: "12345",
         api_key: uuid(),
@@ -77,8 +77,12 @@ console.log(placeId, 'placeId123456')
         google_place_id: placeIdvalidated?.id,
       }
 
-      const insertedLocation = await db.insertInto("Locations").values(newLocation).executeTakeFirst();
+      const insertedLocation = await db.insertInto("Locations").values(newLocationData).executeTakeFirst();
       if (!insertedLocation) return res.status(500).success({ success: false, message: "Failed to create location" })
+
+      const newLocation = await db.selectFrom("Locations").where("location_id", "=", Number(insertedLocation.insertId)).selectAll().executeTakeFirst();
+      if (!newLocation) return res.status(500).success({ success: false, message: "Failed to retrieve new location" })
+      res.addSession(newLocation);
 
       body.location_id = Number(insertedLocation.insertId);
     }
@@ -87,7 +91,7 @@ console.log(placeId, 'placeId123456')
       return res.status(400).success({ success: false, message: "Email, name, and score are required" })
     }
 
-    const emailExist = await db.selectFrom("Highscores").where("email", "=", email).selectAll().executeTakeFirst()
+    const emailExist = await db.selectFrom("Highscores").where("email", "=", email).where("location_id", "=", body.location_id).selectAll().executeTakeFirst()
 
     if (emailExist?.email) {
       await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).execute()
@@ -95,7 +99,7 @@ console.log(placeId, 'placeId123456')
     }
 
 console.log(body, 'body123456')
-    await db.insertInto("Highscores").values(body).execute()
+    await db.insertInto("Highscores").values(body).onDuplicateKeyUpdate({email}).execute()
 
     // Send the new high score to Zapier
     // if(session.name !== "test") {
