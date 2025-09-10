@@ -4,7 +4,7 @@ import { HighscoresSchema } from "./highscores.schemas"
 import axios from "axios";
 import { z } from "zod"
 import { v4 as uuid } from "uuid"
-import { normalizeQuery } from "@/lib/Utils";
+import { normalizeQuery } from "../../lib/Utils";
 
 const highscoresRouter = new Router()
 
