@@ -104,6 +104,31 @@
       </button>
     </div>
 
+          <div id="not_authorized" class="absolute inset-0 w-full flex items-center justify-center z-30 hidden">
+        <div class="relative bg-gradient-to-b from-orange-200 to-orange-400 md:p-5 p-2 rounded-3xl">
+        <div class="relative h-12 mb-4 mt-3 px-3 flex items-center justify-center w-full">
+          <div class="absolute inset-0 bg-red-400 rounded-full transform -skew-y-1 shadow-md"></div>
+          <div class="absolute inset-0 bg-red-500 rounded-full transform skew-y-1 shadow-md"></div>
+          <h1 class="title relative text-2xl text-shadow-lg font-extrabold text-white tracking-wider drop-shadow-md">
+            Not Authorized!
+          </h1>
+        </div>
+    
+        <form id="" class="lg:space-y-4 space-y-2">
+          <div class="flex flex-col gap-2 mt-2">
+            <div>
+                <p class="text-2xl font-bold text-center w-96">
+                Sorry, you are not authorized on this server, or your location is invalid. Please go back to the global server.
+                </p>
+            </div>
+            <button type="redirect_to_global" class="w-full py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600">
+              Confirm
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
 
         <div id="rotate-portrait-overlay" class="fixed inset-0 bg-black bg-opacity-80 flex flex-col items-center justify-center z-50 hidden">
           <!-- <img src="images/rotate-phone.png" alt="Rotate Device" class="w-24 mb-4" /> -->

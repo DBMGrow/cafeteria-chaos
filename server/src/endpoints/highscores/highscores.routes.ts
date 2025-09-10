@@ -3,6 +3,8 @@ import { db } from "../../lib/database"
 import { HighscoresSchema } from "./highscores.schemas"
 import axios from "axios";
 import { z } from "zod"
+import { v4 as uuid } from "uuid"
+import { normalizeQuery } from "@/lib/Utils";
 
 const highscoresRouter = new Router()
 
@@ -54,30 +56,55 @@ highscoresRouter.post("/", {}, async (req, res) => {
     const parsedBody = HighscoresSchema.parse(req.body)
 
     const { email, first_name, last_name, score } = parsedBody
-
-    if (!email || !first_name || !last_name || !score) {
-      return res.status(400).success({ success: false, message: "Email, name, and score are required" })
-    }
-
-    const emailExist = await db.selectFrom("Highscores").where("email", "=", email).selectAll().executeTakeFirst()
-
-    if (emailExist?.email) {
-      await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).execute()
-      return res.status(200).success({ success: true, message: "Highscore updated successfully" })
-    }
+    const placeId = normalizeQuery(req.query.placeId);
 
     const body = {
       ...req.body,
       location_id: session.location_id,
     }
 
-    await db.insertInto("Highscores").values(body).execute()
+    if (placeId && placeId !== 'test' && placeId !== session.google_place_id) {
+      const placeIdvalidated = await res.validPlaceId(String(placeId));
+      if (!placeIdvalidated) {
+        return res.status(400).success({ success: false, message: "Invalid location" })
+      }
+
+      const newLocationData = {
+        name: placeIdvalidated?.formattedAddress,
+        password: "12345",
+        api_key: uuid(),
+        location_type: "user" as const,
+        google_place_id: placeIdvalidated?.id,
+      }
+      
+    
+      const insertedLocation = await db.insertInto("Locations").values(newLocationData).executeTakeFirst();
+      if (!insertedLocation) return res.status(500).success({ success: false, message: "Failed to create location" })
+
+      const newLocation = await db.selectFrom("Locations").where("location_id", "=", Number(insertedLocation.insertId)).selectAll().executeTakeFirst();
+      if (!newLocation) return res.status(500).success({ success: false, message: "Failed to retrieve new location" })
+      res.addSession(newLocation);
+
+      body.location_id = Number(insertedLocation.insertId);
+    }
+
+    if (!email || !first_name || !last_name || !score) {
+      return res.status(400).success({ success: false, message: "Email, name, and score are required" })
+    }
+
+    const emailExist = await db.selectFrom("Highscores").where("email", "=", email).where("location_id", "=", body.location_id).selectAll().executeTakeFirst()
+
+    if (emailExist?.email) {
+      await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).where("location_id", "=", body.location_id).execute()
+      return res.status(200).success({ success: true, message: "Highscore updated successfully" })
+    }
+    await db.insertInto("Highscores").values(body).onDuplicateKeyUpdate({email}).execute()
 
     // Send the new high score to Zapier
-    if(session.name !== "test") {
+    if(process.env.MODE === "production") {
       const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? "";
       await axios.post(zapierWebhookUrl, {...body, location_name: session.name});
-      }
+    }
 
     res.status(200).success({ success: true, message: "Highscore added successfully" })
   } catch (error) {

@@ -28,7 +28,7 @@ export class RequestMethods {
 
     const location = await db.selectFrom("Locations").where("api_key", "=", _api_key).selectAll().executeTakeFirst()
 
-    if (!location) throw new CodedError("Invalid API token", 401, "REQ|01")
+    if (!location) throw new CodedError("Invalid API token", 401, "REQ|02")
 
     return location
   }
@@ -132,6 +132,28 @@ export class ResponseMethods {
     this.res.cookie("_locationType", "", cookieOptions) 
     this.res.cookie("_locationID", "", cookieOptions)  
   }
+
+  async validPlaceId(placeId: string): Promise<boolean | any> {
+    if (!placeId) return false;
+
+    try {
+      const resp = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": "*",
+          "X-Goog-Api-Key": process.env.MAPS_API_KEY || ""
+        }
+      });
+
+      const body = await resp.json();
+
+      if (!resp.ok) return false;
+      return body
+    } catch (e) {
+      return false;
+    }
+  }
 }
 
 class Router {
@@ -155,6 +177,7 @@ class Router {
         res.error = responseMethods.error.bind(responseMethods)
         res.addSession = responseMethods.addSession.bind(responseMethods)
         res.removeSession = responseMethods.removeSession.bind(responseMethods)
+        res.validPlaceId = responseMethods.validPlaceId.bind(responseMethods)
 
         await handler(req, res, next)
       } catch (error: any) {

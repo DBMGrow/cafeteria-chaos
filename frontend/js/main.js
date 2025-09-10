@@ -42,6 +42,7 @@ const googleSearchModal = document.getElementById("google_search_modal")
 const openDashboardButton = document.getElementById("open_dashboard")
 const fullscreenButton = document.getElementById("fullscreen-button")
 const captchaContainer = document.getElementById("captcha-container")
+const notAuthorizedModal = document.getElementById("not_authorized")
 const overlayBackgroundBlured = document.getElementById("overlay")
 
 function preload() {
@@ -127,10 +128,16 @@ async function initializeSession() {
   await fetchLeaderboard()
   await fetchLocationsSession()
 
+  if (!session) {
+    notAuthorizedModal.classList.remove("hidden")
+    overlayBackgroundBlured.classList.remove("hidden")
+  }
+
   if (!session.data.recaptchaVerified) {
     captchaContainer.classList.remove("hidden")
     overlayBackgroundBlured.classList.remove("hidden")
   }
+
   populateLeaderboard()
 }
 
@@ -523,7 +530,8 @@ function showhighScoresForm({ isHighScore, playerScore }) {
     const first_name = event.target.querySelector("#first_name").value
     const last_name = event.target.querySelector("#last_name").value
     const clickedButton = event.submitter
-    console.log(`Button pressed: ${clickedButton.id}`) // Log the button's id
+    const urlParams = new URLSearchParams(window.location.search);
+    const placeId = urlParams.get("lb");
 
     if (clickedButton.id === "cancel") {
       console.log("Cancel button pressed")
@@ -539,7 +547,7 @@ function showhighScoresForm({ isHighScore, playerScore }) {
           return
         }
 
-        const response = await fetch(`/highscores`, {
+        const response = await fetch(`/highscores?placeId=${placeId}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, score, first_name, last_name }),
