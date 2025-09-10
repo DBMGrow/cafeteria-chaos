@@ -28,7 +28,7 @@ export class RequestMethods {
 
     const location = await db.selectFrom("Locations").where("api_key", "=", _api_key).selectAll().executeTakeFirst()
 
-    if (!location) throw new CodedError("Invalid API token", 401, "REQ|01")
+    if (!location) throw new CodedError("Invalid API token", 401, "REQ|02")
 
     return location
   }

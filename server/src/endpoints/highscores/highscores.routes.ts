@@ -4,6 +4,7 @@ import { HighscoresSchema } from "./highscores.schemas"
 import axios from "axios";
 import { z } from "zod"
 import { v4 as uuid } from "uuid"
+import { normalizeQuery } from "@/lib/Utils";
 
 const highscoresRouter = new Router()
 
@@ -55,7 +56,7 @@ highscoresRouter.post("/", {}, async (req, res) => {
     const parsedBody = HighscoresSchema.parse(req.body)
 
     const { email, first_name, last_name, score } = parsedBody
-    const placeId = req.query.placeId;
+    const placeId = normalizeQuery(req.query.placeId);
 
     const body = {
       ...req.body,
