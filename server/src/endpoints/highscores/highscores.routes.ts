@@ -76,7 +76,8 @@ highscoresRouter.post("/", {}, async (req, res) => {
         location_type: "user" as const,
         google_place_id: placeIdvalidated?.id,
       }
-
+      
+    
       const insertedLocation = await db.insertInto("Locations").values(newLocationData).executeTakeFirst();
       if (!insertedLocation) return res.status(500).success({ success: false, message: "Failed to create location" })
 
@@ -97,14 +98,13 @@ highscoresRouter.post("/", {}, async (req, res) => {
       await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).where("location_id", "=", body.location_id).execute()
       return res.status(200).success({ success: true, message: "Highscore updated successfully" })
     }
-
     await db.insertInto("Highscores").values(body).onDuplicateKeyUpdate({email}).execute()
 
     // Send the new high score to Zapier
-    // if(session.name !== "test") {
-    //   const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? "";
-    //   await axios.post(zapierWebhookUrl, {...body, location_name: session.name});
-    //   }
+    if(process.env.MODE === "production") {
+      const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? "";
+      await axios.post(zapierWebhookUrl, {...body, location_name: session.name});
+    }
 
     res.status(200).success({ success: true, message: "Highscore added successfully" })
   } catch (error) {
