@@ -3,6 +3,7 @@ import CodedError from "./CodedError";
 import { db } from "./database"
 import Router, { ResponseMethods } from "./router"
 import { NextFunction, Req, Res } from "./types"
+import { normalizeQuery } from "./Utils";
 
 export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction)  => {
   try {
@@ -11,13 +12,20 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction)  =>
   const responseMethods = new ResponseMethods(req, res);
 
   // Safely read ?lb=... (handle array case from query parsers)
-  const rawLb = Array.isArray((req as any).query?.lb) ? (req as any).query.lb[0] : (req as any).query?.lb;
-  let locationsName = rawLb || 'test';
+  let locationsName = normalizeQuery(req.query.lb);
+
+
+  if (!locationsName) {
+    if (process.env.MODE === 'production') {
+      locationsName = 'production_global';
+    }else{
+      locationsName = 'test';
+    }
+  }
 
   const isValidPlaceId = await responseMethods.validPlaceId(locationsName);
 
-  if (!isValidPlaceId && locationsName !== 'test') {
-    console.log(78686)
+  if (!isValidPlaceId && locationsName !== 'production_global' && locationsName !== 'test') {
     responseMethods.removeSession();
     return next();
   }
@@ -28,8 +36,8 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction)  =>
       .where('Locations.google_place_id', '=', locationsName)
       .executeTakeFirst();
 
-    //if location is not found, fallback to 'test' location
-    if (!location && locationsName !== 'test') {
+    //if location is not found, fallback to 'base' location
+    if (!location && locationsName !== 'production_global' && locationsName !== 'test') {
       location = await db
         .selectFrom('Locations')
         .selectAll()
