@@ -44,6 +44,8 @@ const fullscreenButton = document.getElementById("fullscreen-button")
 const captchaContainer = document.getElementById("captcha-container")
 const notAuthorizedModal = document.getElementById("not_authorized")
 const overlayBackgroundBlured = document.getElementById("overlay")
+const searchList  = document.getElementById("search_list");
+const searchInputQuery = document.getElementById("search_query");
 
 function preload() {
   // LOAD SOUNDS
@@ -638,7 +640,6 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
 })
 
 function renderGoogleSearchList(items) {
-  const searchList  = document.getElementById("search_list");
   searchList.innerHTML = "";
   if (!items || items.length === 0) {
     searchList.innerHTML = `<div class="px-3 py-2 text-gray-600">No results found.</div>`;
@@ -673,50 +674,44 @@ function renderGoogleSearchList(items) {
 }
 
 function selectedGoogleSearch(idx) {
-  const searchList  = document.getElementById("search_list");
-  const searchQuery = document.getElementById("search_query");
   const item = currentItems[idx];
   if (!item) return;
 
   const mainText = item?.structuredFormat?.mainText?.text ?? "";
-  searchQuery.value = mainText; // put selected label into the input
+  searchInputQuery.value = mainText; // put selected label into the input
 
   // If you want to store the chosen placeId for submit:
-  searchQuery.dataset.placeId = item?.placeId ?? "";
+  searchInputQuery.dataset.placeId = item?.placeId ?? "";
 
   searchList.classList.add("hidden");
-  searchQuery.setAttribute("aria-expanded", "false");
+  searchInputQuery.setAttribute("aria-expanded", "false");
 }
 
 const debouncedGoogleSearch = debounce(async (query) => {
-  const searchList  = document.getElementById("search_list");
-  const searchQuery = document.getElementById("search_query");
   try{
   const data = await fetchSearchLocation(query);
   currentItems = Array.isArray(data.data) ? data.data : [];
   console.log(data, currentItems, "elements")
   renderGoogleSearchList(currentItems);
   searchList.classList.remove("hidden");
-  searchQuery.setAttribute("aria-expanded", "true");
+  searchInputQuery.setAttribute("aria-expanded", "true");
 } catch (e) {
   console.error("Search error:", e);
   currentItems = [];
   renderGoogleSearchList(currentItems);
   searchList.classList.remove("hidden");
-  searchQuery.setAttribute("aria-expanded", "true");
+  searchInputQuery.setAttribute("aria-expanded", "true");
 }
 }, 250);
 
 
 document.getElementById("search_query").addEventListener("input", async function (event) {
   event.preventDefault();
-  const searchList  = document.getElementById("search_list");
-  const searchQuery = document.getElementById("search_query");
   const query = event.target.value;
   if (!query) {
     searchList.innerHTML = "";
     searchList.classList.add("hidden");
-    searchQuery.setAttribute("aria-expanded", "false");
+    searchInputQuery.setAttribute("aria-expanded", "false");
     return
   };
 
@@ -727,9 +722,8 @@ document.getElementById("search_query").addEventListener("input", async function
 
 document.getElementById("google_search_form").addEventListener("submit", async function (event) {
   event.preventDefault();
-  const searchQuery = document.getElementById("search_query");
-  const q = searchQuery.value.trim();
-  const placeId = searchQuery.dataset.placeId || "";
+  const q = searchInputQuery.value.trim();
+  const placeId = searchInputQuery.dataset.placeId || "";
 
   console.log("Submit:", { q, placeId });
 
