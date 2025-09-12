@@ -23,9 +23,9 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
       }
     }
 
-    const isPlaceIdInDB = await db.selectFrom("Locations").selectAll().where("Locations.google_place_id", "=", locationsName).executeTakeFirst()
+    let location = await db.selectFrom("Locations").selectAll().where("Locations.google_place_id", "=", locationsName).executeTakeFirst()
 
-    if (!isPlaceIdInDB && !ALLOWED_PLACE_IDS.includes(locationsName)) {
+    if (!location && !ALLOWED_PLACE_IDS.includes(locationsName)) {
       const googlePlace = await responseMethods.validPlaceId(locationsName)
 
       if (!googlePlace) {
@@ -35,7 +35,6 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
       }
     }
 
-    let location =  await db.selectFrom("Locations").selectAll().where("Locations.google_place_id", "=", locationsName).executeTakeFirst()
 
     //if location is not found, fallback to 'base' location
     if (!location && locationsName !== "production_global" && locationsName !== "test") {
@@ -44,6 +43,8 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
 
     if (location) {
       await responseMethods.addSession(location)
+    } else {
+      responseMethods.removeSession();
     }
 
     return next()
