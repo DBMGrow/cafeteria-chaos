@@ -35,7 +35,7 @@ var boom, spliced, missed, over, start // sounds
 var timerValue = 60
 var leaderboardData = []
 let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
-let emailInput, passwordInput, loginButton, loginMessage, session
+let emailInput, passwordInput, loginButton, loginMessage, session, locationsList
 
 const playGameContainer = document.getElementById("playGameContainer")
 const googleSearchModal = document.getElementById("google_search_modal")
@@ -125,12 +125,26 @@ async function fetchLocationsSession() {
   }
 }
 
+async function fetchLocations() {
+  try {
+    const response = await fetch(`/locations`)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    const data = await response.json()
+
+    locationsList = data
+    renderRecentLocations();
+  } catch (error) {
+    console.error("Error fetching locations:", error)
+  }
+}
 
 async function initializeSession() {
 
   await fetchLeaderboard()
   await fetchLocationsSession()
-
+  await fetchLocations()
   if (!session) {
     notAuthorizedModal.classList.remove("hidden")
     overlayBackgroundBlured.classList.remove("hidden")
@@ -955,6 +969,30 @@ function populateLeaderboard() {
   })
 }
 
+function renderRecentLocations() {
+  const container = document.getElementById("recent_schools");
+  if (!container) return;
+  container.innerHTML = "";
+
+  if (!locationsList || locationsList.data.length === 0) {
+    container.innerHTML = `<div class="text-gray-600 px-3 py-2">No recent schools found.</div>`;
+    return;
+  }
+
+  locationsList.data.forEach((loc) => {
+    const div = document.createElement("div");
+    div.className = "hover:bg-orange-200 hover:shadow-lg text-gray-800 font-medium rounded-xl shadow-md p-2 duration-300 ease-in border border-orange-300 cursor-pointer";
+    div.innerHTML = `<p>${loc.name || "Unknown School"}</p>`;
+
+    div.addEventListener("click", () => {
+      // You can set the search input or handle selection here
+      searchInputQuery.value = loc.name || "";
+      searchInputQuery.dataset.placeId = loc.google_place_id || "";
+    });
+    container.appendChild(div);
+  });
+}
+
 // Decrement the timer every second
 setInterval(() => {
   if (isPlay && timerValue > 0) {
@@ -977,9 +1015,6 @@ function checkOrientation() {
     overlay.classList.add("hidden")
     overlay.classList.remove("flex")
     document.body.style.overflow = ""
-    if (session) {
-      // document.getElementById("leaderboard").style.display = "block"
-    }
   }
 }
 
