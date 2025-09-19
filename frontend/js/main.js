@@ -46,6 +46,7 @@ const notAuthorizedModal = document.getElementById("not_authorized")
 const overlayBackgroundBlured = document.getElementById("overlay")
 const searchList  = document.getElementById("search_list");
 const searchInputQuery = document.getElementById("search_query");
+const isMobilelandscape = window.matchMedia("(max-width: 1367px)").matches
 
 function preload() {
   // LOAD SOUNDS
@@ -176,13 +177,13 @@ async function setup() {
 
   await initializeSession() // Initialize session data
 
-  const showLogin = session
-  if (!showLogin) {
-    showLoginForm()
-  } else {
-    drawLeaderboard({ isHidden: 0 })
+  if (session) {
     ShowLogoutButton({ isHidden: 0 })
+    ShowFullScreenButton({ isHidden: 0 })
+    drawLeaderboard({ isHidden: 0 })
     ShowLeaderboardButton({ isHidden: 0 })
+  } else {
+    showLoginForm()
   }
 }
 
@@ -232,6 +233,7 @@ function game() {
   // gameMenu.classList.add("hidden")
   showGameMenu(0, 1)
   ShowLogoutButton({ isHidden: 1 })
+  ShowFullScreenButton({ isHidden: 1 })
   ShowLeaderboardButton({ isHidden: 1 })
   drawLeaderboard({ isHidden: 1 })
 
@@ -434,6 +436,7 @@ function gameOver() {
 function playAgainButton() {
   drawLeaderboard({ isHidden: 0 })
   ShowLogoutButton({ isHidden: 0 })
+  ShowFullScreenButton({ isHidden: 0 })
   ShowLeaderboardButton({ isHidden: 0 })
 
   showGameMenu(1, 0)
@@ -597,6 +600,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       document.getElementById("login-form").classList.add("hidden") // Hide the form
       drawLeaderboard({ isHidden: 0 })
       ShowLogoutButton({ isHidden: 0 })
+      ShowFullScreenButton({ isHidden: 0 })
       ShowLeaderboardButton({ isHidden: 0 })
     } else {
       alert("Login failed. Please check your credentials.")
@@ -719,7 +723,6 @@ document.getElementById("search_query").addEventListener("input", async function
 });
 
 
-
 document.getElementById("google_search_form").addEventListener("submit", async function (event) {
   event.preventDefault();
   const q = searchInputQuery.value.trim();
@@ -759,6 +762,11 @@ document.getElementById("google_search_form").addEventListener("submit", async f
 
 playGameContainer.addEventListener("click", function (event) {
   // Check if the clicked element has the "playGame" class
+  if (["production_global", "test"].includes(session.data.name)) {
+    googleSearchModal.classList.remove("hidden")
+    return
+  }
+
   if (event.target.classList.contains("playGame")) {
     console.log("Image clicked:", event.target.alt) // Log the clicked image's alt text
     start.play()
@@ -829,29 +837,37 @@ function ShowLogoutButton({ isHidden = 0 }) {
 }
 
 function ShowLeaderboardButton({ isHidden = 0 }) {
-  const isMobilelandscape = window.matchMedia("(max-width: 1367px)").matches
   const leaderboardButton = document.getElementById("open_dashboard")
-
-  
+  if (["production_global", "test"].includes(session.data.name)) return
   if (!isMobilelandscape) {
     leaderboardButton.style.display = "none"
-    fullscreenButton.style.display = "none"
     return // Don't show leaderboard button
   }
 
   if (isHidden) {
     leaderboardButton.style.display = "none"
-    fullscreenButton.style.display = "none"
   } else {
     leaderboardButton.style.display = "block"
-    fullscreenButton.style.display = "block"
   }
 }
 
+function ShowFullScreenButton({ isHidden = 0 }) {
+  if (!isMobilelandscape) {
+    fullscreenButton.style.display = "none"
+    return // Don't show leaderboard button
+  }
+
+  if (isHidden) {
+    fullscreenButton.style.display = "none"
+  } else {
+    fullscreenButton.style.display = "block"
+  } 
+}
+
 function drawLeaderboard({ isHidden = 0 }) {
-  const isMobile = window.matchMedia("(max-width: 1367px)").matches
   const isPortrait = window.matchMedia("(orientation: portrait)").matches
-  if (isMobile && isPortrait) return // Don't show leaderboard on mobile portrait
+  if (["production_global", "test"].includes(session.data.name)) return // Don't show leaderboard on global or test
+  if (isMobilelandscape && isPortrait) return // Don't show leaderboard on mobile portrait
 
   const leaderboard = document.getElementById("leaderboard")
 
@@ -962,7 +978,7 @@ function checkOrientation() {
     overlay.classList.remove("flex")
     document.body.style.overflow = ""
     if (session) {
-      document.getElementById("leaderboard").style.display = "block"
+      // document.getElementById("leaderboard").style.display = "block"
     }
   }
 }
