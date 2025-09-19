@@ -6,7 +6,9 @@ import { v4 as uuid } from "uuid"
 const locationsRouter = new Router()
 
 locationsRouter.get("/", {}, async (req, res) => {
-  const locationsList = await db.selectFrom("Locations").selectAll().execute()
+  const locationsList = await db.selectFrom("Locations").where("Locations.location_type", "=", "user").select(["location_id","name","created_at", "updated_at", "location_type", "google_place_id"]).execute()
+
+  if (!locationsList) throw new CodedError("No locations found", 404, "LOC|00")
 
   res.success(locationsList, "Locations retrieved successfully")
 })
