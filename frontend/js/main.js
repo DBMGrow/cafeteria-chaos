@@ -723,7 +723,6 @@ document.getElementById("search_query").addEventListener("input", async function
 });
 
 
-
 document.getElementById("google_search_form").addEventListener("submit", async function (event) {
   event.preventDefault();
   const q = searchInputQuery.value.trim();
@@ -763,6 +762,11 @@ document.getElementById("google_search_form").addEventListener("submit", async f
 
 playGameContainer.addEventListener("click", function (event) {
   // Check if the clicked element has the "playGame" class
+  if (["production_global", "test"].includes(session.data.name)) {
+    googleSearchModal.classList.remove("hidden")
+    return
+  }
+
   if (event.target.classList.contains("playGame")) {
     console.log("Image clicked:", event.target.alt) // Log the clicked image's alt text
     start.play()
