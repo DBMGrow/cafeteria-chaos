@@ -134,7 +134,7 @@ async function fetchLocations() {
     const data = await response.json()
 
     locationsList = data
-    // renderRecentLocations();
+    renderRecentLocations();
   } catch (error) {
     console.error("Error fetching locations:", error)
   }
