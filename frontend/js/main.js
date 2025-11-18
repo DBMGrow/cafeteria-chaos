@@ -36,6 +36,7 @@ var timerValue = 60
 var leaderboardData = []
 let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
 let emailInput, passwordInput, loginButton, loginMessage, session, locationsList
+let currentItems = [] 
 
 const playGameContainer = document.getElementById("playGameContainer")
 const googleSearchModal = document.getElementById("google_search_modal")
@@ -694,18 +695,17 @@ function renderGoogleSearchList(items) {
   searchList.appendChild(frag);
 }
 
-function selectedGoogleSearch(idx) {
-  const item = currentItems[idx];
-  if (!item) return;
+async function selectedGoogleSearch(idx) {
+  const selectedLocation = currentItems[idx];
 
-  const mainText = item?.structuredFormat?.mainText?.text ?? "";
-  searchInputQuery.value = mainText; // put selected label into the input
+  if (!selectedLocation) return;
 
-  // If you want to store the chosen placeId for submit:
-  searchInputQuery.dataset.placeId = item?.placeId ?? "";
+  const placeId = selectedLocation.placeId || "";
 
-  searchList.classList.add("hidden");
-  searchInputQuery.setAttribute("aria-expanded", "false");
+  const url = new URL(window.location.href);
+  url.searchParams.set("lb", placeId);
+  window.location.href = url;
+  await initializeSession();
 }
 
 const debouncedGoogleSearch = debounce(async (query) => {
