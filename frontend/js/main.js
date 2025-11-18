@@ -629,6 +629,8 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 document.getElementById("captcha_form").addEventListener("submit", async function (event) {
   event.preventDefault()
 
+  const errorReCAPTCHA = this.querySelector("#error")
+
   const token = grecaptcha.getResponse();
   if (!token) {
     alert("Please complete the reCAPTCHA.");
@@ -648,11 +650,13 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
       captchaContainer.classList.add("hidden")
       overlayBackgroundBlured.classList.add("hidden")
     } else {
-      alert(data.message);
+      errorReCAPTCHA.textContent = data.message
+      errorReCAPTCHA.classList.remove("hidden")
     }
   } catch (error) {
     console.error("Error during reCAPTCHA verification:", error)
-    alert(error)
+    errorReCAPTCHA.textContent = "An error occurred. Please try again."
+    errorReCAPTCHA.classList.remove("hidden")
   }
 })
 
