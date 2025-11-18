@@ -645,7 +645,6 @@ document.getElementById("captcha_form").addEventListener("submit", async functio
     const data = await response.json();
 
     if (data.success) {
-      alert(data.message);
       captchaContainer.classList.add("hidden")
       overlayBackgroundBlured.classList.add("hidden")
     } else {
