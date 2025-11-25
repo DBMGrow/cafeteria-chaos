@@ -1,116 +1,130 @@
 import Router from "../../lib/router"
 import { db } from "../../lib/database"
 import { HighscoresSchema } from "./highscores.schemas"
-import axios from "axios";
+import axios from "axios"
 import { z } from "zod"
 import { v4 as uuid } from "uuid"
-import { normalizeQuery } from "../../lib/Utils";
+import { normalizeQuery } from "../../lib/Utils"
+import CodedError from "@/lib/CodedError"
 
 const highscoresRouter = new Router()
 
 highscoresRouter.get("/", {}, async (req, res) => {
-  try {
-    const session = await req.getSession()
-    const highscoresList = await db
-      .selectFrom("Highscores")
-      .where("Highscores.location_id", "=", session.location_id)
-      .orderBy("Highscores.score", "desc")
-      .selectAll()
-      .limit(10)
-      .execute()
-    res.json(highscoresList)
-  } catch (error) {
-    console.error(error)
-    res.status(500).send("Internal Server Error")
-  }
+  const session = await req.getSession()
+  const highscoresList = await db
+    .selectFrom("Highscores")
+    .where("Highscores.location_id", "=", session.location_id)
+    .orderBy("Highscores.score", "desc")
+    .selectAll()
+    .limit(10)
+    .execute()
+
+  res.success(highscoresList, "Highscores retrieved successfully")
 })
 
 highscoresRouter.post("/reset", {}, async (req, res) => {
-  try {
-    const session = await req.getSession()
-    const { password } = req.body
+  const session = await req.getSession()
+  const { password } = req.body
 
-    if (session.password !== password) {
-      return res.status(401).success({ success: false, message: "Invalid password" })
-    }
-
-    const location = await db.selectFrom("Locations").where("password", "=", password).selectAll().executeTakeFirstOrThrow()
-
-    if (!location) {
-      return res.status(401).success({ success: false, message: "No lacotion found" })
-    }
-
-    await db.deleteFrom("Highscores").execute()
-
-    res.status(200).json({ success: true, message: "Highscore reset successfully" })
-  } catch (error) {
-    console.error(error)
-    res.status(500).send("Internal Server Error")
+  if (session.password !== password) {
+    throw new CodedError("Invalid password", 401, "highscores|reset|01")
   }
+
+  const location = await db.selectFrom("Locations").where("password", "=", password).selectAll().executeTakeFirstOrThrow()
+
+  if (!location) {
+    throw new CodedError("No location found", 401, "highscores|reset|02")
+  }
+
+  await db.deleteFrom("Highscores").execute()
+
+  res.success({ success: true, message: "Highscore reset successfully" })
 })
 
 highscoresRouter.post("/", {}, async (req, res) => {
-  try {
-    const session = await req.getSession()
-    // Validate the request body using the schema
-    const parsedBody = HighscoresSchema.parse(req.body)
+  let session = await req.getSession()
+  // Validate the request body using the schema
+  const parsedBody = HighscoresSchema.parse(req.body)
 
-    const { email, first_name, last_name, score } = parsedBody
-    const placeId = normalizeQuery(req.query.placeId);
+  const { email, first_name, last_name, score } = parsedBody
+  const placeId = normalizeQuery(req.query.placeId)
 
-    const body = {
-      ...req.body,
-      location_id: session.location_id,
-    }
-
-    if (placeId && placeId !== 'test' && placeId !== session.google_place_id) {
-      const placeIdvalidated = await res.validPlaceId(String(placeId));
-      if (!placeIdvalidated) {
-        return res.status(400).success({ success: false, message: "Invalid location" })
-      }
-
-      const newLocationData = {
-        name: placeIdvalidated?.formattedAddress,
-        password: "12345",
-        api_key: uuid(),
-        location_type: "user" as const,
-        google_place_id: placeIdvalidated?.id,
-      }
-      
-    
-      const insertedLocation = await db.insertInto("Locations").values(newLocationData).executeTakeFirst();
-      if (!insertedLocation) return res.status(500).success({ success: false, message: "Failed to create location" })
-
-      const newLocation = await db.selectFrom("Locations").where("location_id", "=", Number(insertedLocation.insertId)).selectAll().executeTakeFirst();
-      if (!newLocation) return res.status(500).success({ success: false, message: "Failed to retrieve new location" })
-      res.addSession(newLocation);
-
-      body.location_id = Number(insertedLocation.insertId);
-    }
-
-    if (!email || !first_name || !last_name || !score) {
-      return res.status(400).success({ success: false, message: "Email, name, and score are required" })
-    }
-
-    const emailExist = await db.selectFrom("Highscores").where("email", "=", email).where("location_id", "=", body.location_id).selectAll().executeTakeFirst()
-
-    if (emailExist?.email) {
-      await db.updateTable("Highscores").set({ score, first_name, last_name }).where("email", "=", email).where("location_id", "=", body.location_id).execute()
-      return res.status(200).success({ success: true, message: "Highscore updated successfully" })
-    }
-    await db.insertInto("Highscores").values(body).onDuplicateKeyUpdate({email}).execute()
-
-    // Send the new high score to Zapier
-    if(process.env.MODE === "production") {
-      const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? "";
-      await axios.post(zapierWebhookUrl, {...body, location_name: session.name});
-    }
-
-    res.status(200).success({ success: true, message: "Highscore added successfully" })
-  } catch (error) {
-    console.error(error)
-    res.status(500).send(error)
+  const body = {
+    email,
+    first_name,
+    last_name,
+    score,
+    location_id: session.location_id,
   }
+
+  let location_name = session.name
+
+  // Check if user is submitting with a new/different location
+  if (placeId && placeId !== session.google_place_id) {
+    const placeIdValidated = await res.validPlaceId(String(placeId))
+    if (!placeIdValidated) {
+      throw new CodedError("Invalid google place location", 400, "highscores|01")
+    }
+
+    const newLocationData = {
+      name: placeIdValidated?.formattedAddress,
+      password: "12345",
+      api_key: uuid(),
+      location_type: "user" as const,
+      google_place_id: placeIdValidated?.id,
+    }
+
+    const insertedLocation = await db.insertInto("Locations").values(newLocationData).executeTakeFirst()
+    if (!insertedLocation) throw new CodedError("Failed to create location", 500, "highscores|02")
+
+    const newLocation = await db
+      .selectFrom("Locations")
+      .where("location_id", "=", Number(insertedLocation.insertId))
+      .selectAll()
+      .executeTakeFirst()
+    if (!newLocation) throw new CodedError("Failed to retrieve new location", 500, "highscores|03")
+
+    res.addSession(newLocation)
+    location_name = newLocation.name
+
+    body.location_id = Number(insertedLocation.insertId)
+  }
+
+  // Check if email already exists for this location
+  const emailExist = await db
+    .selectFrom("Highscores")
+    .where("email", "=", email)
+    .where("location_id", "=", body.location_id)
+    .selectAll()
+    .executeTakeFirst()
+
+  if (emailExist) {
+    // Update existing highscore
+    await db
+      .updateTable("Highscores")
+      .set({ score, first_name, last_name })
+      .where("email", "=", email)
+      .where("location_id", "=", body.location_id)
+      .execute()
+
+    if (process.env.MODE === "production") {
+      const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? ""
+      await axios.post(zapierWebhookUrl, { ...body, location_name })
+    }
+
+    return res.status(200).success({ success: true, message: "Highscore updated successfully" })
+  }
+
+  // Insert new highscore 
+  await db.insertInto("Highscores").values(body).onDuplicateKeyUpdate({ score, first_name, last_name }).execute()
+
+  // Send new high score to Zapier in production
+  if (process.env.MODE === "production") {
+    const zapierWebhookUrl = process.env.ZAPIER_WEBHOOK_URL ?? ""
+    await axios.post(zapierWebhookUrl, { ...body, location_name })
+  }
+
+  res.status(200).success({ success: true, message: "Highscore added successfully" })
 })
 
 export default highscoresRouter
