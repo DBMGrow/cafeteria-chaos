@@ -704,10 +704,7 @@ async function selectedGoogleSearch(idx) {
 
   const placeId = selectedLocation.placeId || "";
 
-  const url = new URL(window.location.href);
-  url.searchParams.set("lb", placeId);
-  window.location.href = url;
-  await initializeSession();
+  navigateLocationSearchParam(placeId);
 }
 
 const debouncedGoogleSearch = debounce(async (query) => {
@@ -739,20 +736,6 @@ document.getElementById("search_query").addEventListener("input", async function
   };
 
   debouncedGoogleSearch(query);
-});
-
-
-document.getElementById("google_search_form").addEventListener("submit", async function (event) {
-  event.preventDefault();
-  const q = searchInputQuery.value.trim();
-  const placeId = searchInputQuery.dataset.placeId || "";
-
-  console.log("Submit:", { q, placeId });
-
-  const url = new URL(window.location.href);
-  url.searchParams.set("lb", placeId ?? "");
-  window.location.href = url;
-  await initializeSession();
 });
 
 
@@ -989,10 +972,9 @@ function renderRecentLocations() {
     div.className = "hover:bg-orange-200 hover:shadow-lg text-gray-800 font-medium rounded-xl shadow-md p-2 duration-300 ease-in border border-orange-300 cursor-pointer";
     div.innerHTML = `<p>${loc.name || "Unknown School"}</p>`;
 
-    div.addEventListener("click", () => {
+    div.addEventListener("click", async () => {
       // You can set the search input or handle selection here
-      searchInputQuery.value = loc.name || "";
-      searchInputQuery.dataset.placeId = loc.google_place_id || "";
+      navigateLocationSearchParam(loc.google_place_id);
     });
     container.appendChild(div);
   });
@@ -1004,6 +986,12 @@ setInterval(() => {
     timerValue--
   }
 }, 1000)
+
+async function navigateLocationSearchParam(placeId) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("lb", placeId || "");
+  window.location.href = url;
+}
 
 // Display the rotate overlay in mobile portrait view
 function checkOrientation() {
