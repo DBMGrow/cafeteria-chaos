@@ -38,6 +38,8 @@ let fruitsSlicedPerPress = 0 // Counter for fruits sliced per mouse press
 let emailInput, passwordInput, loginButton, loginMessage, session, locationsList
 let currentItems = [] 
 
+const locationsParams = new URLSearchParams(window.location.search);
+
 const playGameContainer = document.getElementById("playGameContainer")
 const googleSearchModal = document.getElementById("google_search_modal")
 const openDashboardButton = document.getElementById("open_dashboard")
@@ -779,7 +781,7 @@ document.getElementById("google_search_form").addEventListener("submit", async f
 
 playGameContainer.addEventListener("click", function (event) {
   // Check if the clicked element has the "playGame" class
-  if (["production_global", "test"].includes(session.data.name)) {
+  if (!locationsParams.get("lb")) {
     googleSearchModal.classList.remove("hidden")
     return
   }
@@ -855,7 +857,7 @@ function ShowLogoutButton({ isHidden = 0 }) {
 
 function ShowLeaderboardButton({ isHidden = 0 }) {
   const leaderboardButton = document.getElementById("open_dashboard")
-  if (["production_global", "test"].includes(session.data.name)) return
+  if (!locationsParams.get("lb")) return // Don't show leaderboard button if no lb param
   if (!isMobilelandscape) {
     leaderboardButton.style.display = "none"
     return // Don't show leaderboard button
@@ -883,7 +885,7 @@ function ShowFullScreenButton({ isHidden = 0 }) {
 
 function drawLeaderboard({ isHidden = 0 }) {
   const isPortrait = window.matchMedia("(orientation: portrait)").matches
-  if (["production_global", "test"].includes(session.data.name)) return // Don't show leaderboard on global or test
+  if (!locationsParams.get("lb")) return // Don't show leaderboard if no lb param
   if (isMobilelandscape && isPortrait) return // Don't show leaderboard on mobile portrait
 
   const leaderboard = document.getElementById("leaderboard")
