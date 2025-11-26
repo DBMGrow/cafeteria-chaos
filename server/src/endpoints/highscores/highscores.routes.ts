@@ -5,7 +5,7 @@ import axios from "axios"
 import { z } from "zod"
 import { v4 as uuid } from "uuid"
 import { normalizeQuery } from "../../lib/Utils"
-import CodedError from "@/lib/CodedError"
+import CodedError from "../../lib/CodedError"
 
 const highscoresRouter = new Router()
 
