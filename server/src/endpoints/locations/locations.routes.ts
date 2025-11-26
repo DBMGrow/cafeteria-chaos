@@ -8,13 +8,15 @@ const locationsRouter = new Router()
 
 locationsRouter.get("/", {}, async (req, res) => {
   await req.getSession()
-  const locationsList = await db
+  const locations = await db
     .selectFrom("Locations")
+    .innerJoin("Highscores", "Highscores.location_id", "Locations.location_id")
     .where("Locations.location_type", "=", "user")
-    .select(["location_id", "name", "created_at", "updated_at", "location_type", "google_place_id"])
+    .select(["Locations.location_id", "Locations.name", "Locations.created_at", "Locations.updated_at", "Locations.location_type", "Locations.google_place_id"])
+    .distinct()
     .execute()
 
-  res.success(locationsList, "Locations retrieved successfully")
+  res.success(locations, "Locations retrieved successfully")
 })
 
 locationsRouter.get("/googlesearch", {}, async (req, res) => {
