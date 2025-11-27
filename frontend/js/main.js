@@ -583,6 +583,7 @@ function showhighScoresForm({ isHighScore, playerScore }) {
         event.target.querySelector("#first_name").value = ""
         event.target.querySelector("#last_name").value = ""
         await fetchLeaderboard()
+        await fetchLocationsSession()
         populateLeaderboard()
         document.getElementById("high_scores").classList.add("hidden") // Hide the form
         playAgainButton()
@@ -613,6 +614,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       const data = await response.json()
       alert("Login successful!")
       await fetchLeaderboard()
+      await fetchLocationsSession() 
       populateLeaderboard()
       document.getElementById("login-form").classList.add("hidden") // Hide the form
       drawLeaderboard({ isHidden: 0 })
@@ -814,6 +816,7 @@ document.getElementById("resetLeaderboardForm").addEventListener("submit", async
 
       console.log("Leaderboard reset successfully.")
       await fetchLeaderboard()
+      populateLeaderboard() 
       confirmResetModal.style.display = "none"
     } catch (error) {
       console.error("Error resetting leaderboard:", error)
@@ -920,7 +923,7 @@ document.getElementById("close_google_search").addEventListener("click", functio
 function populateLeaderboard() {
   const leaderboardRows = document.getElementById("leaderboard-rows")
   console.log("populateLeaderboard: ", leaderboardData)
-
+  updateLocationName()
   leaderboardRows.innerHTML = ""
 
   if (leaderboardData.length === 0) {
@@ -955,6 +958,19 @@ function populateLeaderboard() {
 
     leaderboardRows.insertAdjacentHTML("beforeend", rowContent)
   })
+}
+
+function updateLocationName() {
+  const locationNameElement = document.getElementById("location-name")
+
+  if (!session || !session.data) {
+    locationNameElement.textContent = "Unknown Location"
+    return
+  }
+
+  // Use the session location name
+  const locationName = session.data.name || "Unknown Location"
+  locationNameElement.textContent = locationName
 }
 
 function renderRecentLocations() {
