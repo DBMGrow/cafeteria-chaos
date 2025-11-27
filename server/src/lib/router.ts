@@ -94,15 +94,8 @@ export class ResponseMethods {
     console.error("an error has occurred: ", error.message)
   }
 
-  async addSession(location: Selectable<DB["Locations"]>): Promise<void> {
-    const query = await db
-      .selectFrom("Locations")
-      .where("location_id", "=", location.location_id)
-      .select(["name", "api_key", "location_id", "location_type"])
-      .executeTakeFirst()
-
+  async addSession(location: Selectable<DB["Locations"]>, baseName?: string): Promise<void> {
     const cookieOptions: CookieOptions = {
-      domain: process.env.BASE_URL ?? "localhost",
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
       maxAge: 1000 * 60 * 60 * 24 * 7,
       path: "/",
@@ -111,15 +104,19 @@ export class ResponseMethods {
       sameSite: "strict",
     }
 
-    this.res.cookie("_api_key", query?.api_key, cookieOptions)
-    this.res.cookie("_name", query?.name, cookieOptions)
-    this.res.cookie("_locationType", query?.location_type, cookieOptions)
-    this.res.cookie("_locationID", query?.location_id, cookieOptions)
+    if (baseName) {
+      this.res.cookie("_baseName", baseName, cookieOptions)
+    } else {
+      this.res.cookie("_baseName", "", { ...cookieOptions, maxAge: 0 })
+    }
+    this.res.cookie("_api_key", location.api_key, cookieOptions)
+    this.res.cookie("_name", location.name, cookieOptions)
+    this.res.cookie("_locationType", location.location_type, cookieOptions)
+    this.res.cookie("_locationID", location.location_id, cookieOptions)
   }
 
   removeSession() {
     const cookieOptions: CookieOptions = {
-      domain: process.env.BASE_URL ?? "localhost",
       maxAge: 0,
       path: "/",
       httpOnly: true,
@@ -127,10 +124,11 @@ export class ResponseMethods {
       sameSite: "strict",
     }
 
+    this.res.cookie("_baseName", "", cookieOptions)
     this.res.cookie("_api_key", "", cookieOptions)
-    this.res.cookie("_name", "", cookieOptions)  
-    this.res.cookie("_locationType", "", cookieOptions) 
-    this.res.cookie("_locationID", "", cookieOptions)  
+    this.res.cookie("_name", "", cookieOptions)
+    this.res.cookie("_locationType", "", cookieOptions)
+    this.res.cookie("_locationID", "", cookieOptions)
   }
 
   async validPlaceId(placeId: string): Promise<boolean | any> {

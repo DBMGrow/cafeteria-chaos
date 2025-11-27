@@ -66,7 +66,7 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
         .executeTakeFirst()
 
       if (baseLocation) {
-        await responseMethods.addSession(baseLocation)
+        await responseMethods.addSession(baseLocation, isValidPlaceId.formattedAddress)
       } else {
         responseMethods.removeSession()
       }
