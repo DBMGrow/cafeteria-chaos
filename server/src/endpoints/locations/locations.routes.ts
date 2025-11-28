@@ -1,8 +1,8 @@
 import Router from "../../lib/router"
 import { db } from "../../lib/database"
 import CodedError from "../../lib/CodedError"
-import { v4 as uuid } from "uuid"
-import { z } from "zod"
+import { LocationSchema } from "./locations.schemas"
+import { Locations } from "./locations.model"
 
 const locationsRouter = new Router()
 
@@ -77,32 +77,16 @@ locationsRouter.get("/:location_id", {}, async (req, res) => {
 
 locationsRouter.post("/", {}, async (req, res) => {
   const session = await req.getSession()
+  const locationsMethods = new Locations()
 
   // Check if user is admin
   if (session.location_type !== "admin") {
     throw new CodedError("Unauthorized - Admin access required", 403, "LOC|05")
   }
 
-  const data = req.body
+  const parsedBody = LocationSchema.parse(req.body)
 
-  const newLocationData = {
-    ...data,
-    api_key: uuid(),
-  }
-
-  // Check if location already exists
-  const locationsExist = await db
-    .selectFrom("Locations")
-    .where("google_place_id", "=", newLocationData.google_place_id)
-    .where("Locations.name", "=", newLocationData.name)
-    .selectAll()
-    .executeTakeFirst()
-
-  if (locationsExist) {
-    return res.status(200).success({ success: true, message: "Location already exists" })
-  }
-
-  await db.insertInto("Locations").values(newLocationData).execute()
+  await locationsMethods.createLocation(parsedBody)
 
   res.success({ success: true, message: "Location added successfully" })
 })

@@ -6,6 +6,8 @@ import { z } from "zod"
 import { v4 as uuid } from "uuid"
 import { normalizeQuery } from "../../lib/Utils"
 import CodedError from "../../lib/CodedError"
+import { LocationSchema } from "../locations/locations.schemas"
+import { Locations } from "../locations/locations.model"
 
 const highscoresRouter = new Router()
 
@@ -43,6 +45,7 @@ highscoresRouter.post("/reset", {}, async (req, res) => {
 
 highscoresRouter.post("/", {}, async (req, res) => {
   let session = await req.getSession()
+  const locationsMethods = new Locations()
   // Validate the request body using the schema
   const parsedBody = HighscoresSchema.parse(req.body)
 
@@ -62,32 +65,30 @@ highscoresRouter.post("/", {}, async (req, res) => {
   // Check if user is submitting with a new/different location
   if (placeId && placeId !== session.google_place_id) {
     const placeIdValidated = await res.validPlaceId(String(placeId))
+
     if (!placeIdValidated) {
       throw new CodedError("Invalid google place location", 400, "highscores|01")
     }
 
-    const newLocationData = {
+    const newLocationData = LocationSchema.parse({
       name: placeIdValidated?.formattedAddress,
       password: "12345",
-      api_key: uuid(),
       location_type: "user" as const,
       google_place_id: placeIdValidated?.id,
-    }
+    })
 
-    const insertedLocation = await db.insertInto("Locations").values(newLocationData).executeTakeFirst()
+    const insertedLocation = await locationsMethods.createLocation(newLocationData)
+
     if (!insertedLocation) throw new CodedError("Failed to create location", 500, "highscores|02")
 
-    const newLocation = await db
-      .selectFrom("Locations")
-      .where("location_id", "=", Number(insertedLocation.insertId))
-      .selectAll()
-      .executeTakeFirst()
+    const newLocation = await locationsMethods.getLocationById(Number(insertedLocation.insertId))
+
     if (!newLocation) throw new CodedError("Failed to retrieve new location", 500, "highscores|03")
 
     res.addSession(newLocation)
     location_name = newLocation.name
 
-    body.location_id = Number(insertedLocation.insertId)
+    body.location_id = newLocation.location_id
   }
 
   // Check if email already exists for this location
@@ -115,7 +116,7 @@ highscoresRouter.post("/", {}, async (req, res) => {
     return res.status(200).success({ success: true, message: "Highscore updated successfully" })
   }
 
-  // Insert new highscore 
+  // Insert new highscore
   await db.insertInto("Highscores").values(body).onDuplicateKeyUpdate({ score, first_name, last_name }).execute()
 
   // Send new high score to Zapier in production
