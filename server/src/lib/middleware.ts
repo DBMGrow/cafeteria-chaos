@@ -1,3 +1,4 @@
+import { Locations } from "../endpoints/locations/locations.model"
 import CodedError from "./CodedError"
 import { db } from "./database"
 import Router, { ResponseMethods } from "./router"
@@ -12,6 +13,7 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
     if (req.method !== "GET" || req.path !== "/") return next()
 
     const responseMethods = new ResponseMethods(req, res)
+    const locationMethods = new Locations()
 
     const placeIdParam = normalizeQuery(req.query.lb)
 
@@ -41,11 +43,7 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
 
     //?lb=<location> parameter provided
     // First, check if location exists in database
-    let location = await db
-      .selectFrom("Locations")
-      .selectAll()
-      .where("Locations.google_place_id", "=", placeIdParam)
-      .executeTakeFirst()
+    let location = await locationMethods.getLocationByGooglePlaceId(placeIdParam)
 
     // If found in DB, set session and continue
     if (location) {
@@ -59,11 +57,7 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
 
     if (isValidPlaceId) {
       // Valid but new Place ID - set session to "base"
-      const baseLocation = await db
-        .selectFrom("Locations")
-        .selectAll()
-        .where("Locations.google_place_id", "=", "base")
-        .executeTakeFirst()
+      const baseLocation = await locationMethods.getLocationByGooglePlaceId("base")
 
       if (baseLocation) {
         await responseMethods.addSession(baseLocation, isValidPlaceId.formattedAddress)
