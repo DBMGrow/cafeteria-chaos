@@ -20,11 +20,7 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
     // No ?lb= parameter provided
     // Use default "base" location without Google validation
     if (!placeIdParam) {
-      const baseLocation = await db
-        .selectFrom("Locations")
-        .selectAll()
-        .where("Locations.google_place_id", "=", "base")
-        .executeTakeFirst()
+      const baseLocation = await locationMethods.getLocationByGooglePlaceId("base")
 
       if (baseLocation) {
         await responseMethods.addSession(baseLocation)
