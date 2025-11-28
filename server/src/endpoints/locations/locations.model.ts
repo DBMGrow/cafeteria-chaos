@@ -1,9 +1,9 @@
-import { db } from "@/lib/database"
-import { DB } from "@/lib/db"
+import { db } from "../../lib/database"
+import { DB } from "../../lib/db"
 import { InsertResult, Selectable } from "kysely"
 import { v4 as uuid } from "uuid"
 import { Location } from "./locations.schemas"
-import CodedError from "@/lib/CodedError"
+import CodedError from "../../lib/CodedError"
 
 export class Locations {
   async createLocation(location: Location): Promise<InsertResult> {

@@ -1,8 +1,6 @@
 import Router from "../../lib/router"
 import { db } from "../../lib/database"
 import CodedError from "../../lib/CodedError"
-import { v4 as uuid } from "uuid"
-import { z } from "zod"
 import { LocationSchema } from "./locations.schemas"
 import { Locations } from "./locations.model"
 
