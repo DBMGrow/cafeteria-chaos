@@ -12,7 +12,14 @@ locationsRouter.get("/", {}, async (req, res) => {
     .selectFrom("Locations")
     .innerJoin("Highscores", "Highscores.location_id", "Locations.location_id")
     .where("Locations.location_type", "=", "user")
-    .select(["Locations.location_id", "Locations.name", "Locations.created_at", "Locations.updated_at", "Locations.location_type", "Locations.google_place_id"])
+    .select([
+      "Locations.location_id",
+      "Locations.name",
+      "Locations.created_at",
+      "Locations.updated_at",
+      "Locations.location_type",
+      "Locations.google_place_id",
+    ])
     .distinct()
     .execute()
 
@@ -43,36 +50,40 @@ locationsRouter.get("/googlesearch", {}, async (req, res) => {
 
 locationsRouter.get("/session", {}, async (req, res) => {
   const session = await req.getSession()
+  const locationsMethods = new Locations()
 
   if (!session) {
     throw new CodedError("No session found", 401, "LOC|02")
   }
 
-  const locationsList = await db.selectFrom("Locations").where("location_id", "=", session.location_id).selectAll().executeTakeFirst()
+   const location = await locationsMethods.getLocationById(Number(session.location_id))
 
-  if (!locationsList) throw new CodedError("Location not found", 404, "LOC|03")
+  if (!location) throw new CodedError("Location not found", 404, "LOC|03")
 
   const recaptchaVerified = req.cookies?.recaptchaVerified === "true"
   const baseName = req.cookies?._baseName
 
-  res.success({
-    ...locationsList,
-    name: baseName || locationsList.name, 
-    password: "",
-    recaptchaVerified
-  }, "Session found")
+  res.success(
+    {
+      ...location,
+      name: baseName || location.name,
+      password: "",
+      recaptchaVerified,
+    },
+    "Session found"
+  )
 })
 
 locationsRouter.get("/:location_id", {}, async (req, res) => {
   await req.getSession()
+  const locationsMethods = new Locations()
   const location_id = req.params.location_id
-  const locationsList = await db.selectFrom("Locations").where("location_id", "=", Number(location_id)).selectAll().executeTakeFirst()
 
-  if (!locationsList) throw new CodedError("Location not found", 404, "LOC|04")
-  locationsList.password = ""
-  locationsList.api_key = ""
+  const location = await locationsMethods.getLocationById(Number(location_id))
 
-  res.success(locationsList, "Location found")
+  if (!location) throw new CodedError("Location not found", 404, "LOC|04")
+
+  res.success({ ...location, password: "", api_key: "" }, "Location found")
 })
 
 locationsRouter.post("/", {}, async (req, res) => {

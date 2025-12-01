@@ -4,6 +4,7 @@ import { db } from "./database"
 import Router, { ResponseMethods } from "./router"
 import { NextFunction, Req, Res } from "./types"
 import { normalizeQuery } from "./Utils"
+import { validatePlaceId } from "./googlePlaces"
 
 // const ALLOWED_PLACE_IDS = ["production_global", "test"]
 
@@ -49,7 +50,7 @@ export const sessionFromUrl = async (req: Req, res: Res, next: NextFunction) => 
 
     // New Place ID (not in DB)
     // Validate with Google Places API before allowing it
-    const isValidPlaceId = await responseMethods.validPlaceId(placeIdParam)
+    const isValidPlaceId = await validatePlaceId(placeIdParam)
 
     if (isValidPlaceId) {
       // Valid but new Place ID - set session to "base"

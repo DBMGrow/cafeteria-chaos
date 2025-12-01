@@ -8,6 +8,7 @@ import { normalizeQuery } from "../../lib/Utils"
 import CodedError from "../../lib/CodedError"
 import { LocationSchema } from "../locations/locations.schemas"
 import { Locations } from "../locations/locations.model"
+import { validatePlaceId } from "../../lib/googlePlaces"
 
 const highscoresRouter = new Router()
 
@@ -64,7 +65,7 @@ highscoresRouter.post("/", {}, async (req, res) => {
 
   // Check if user is submitting with a new/different location
   if (placeId && placeId !== session.google_place_id) {
-    const placeIdValidated = await res.validPlaceId(String(placeId))
+    const placeIdValidated = await validatePlaceId(String(placeId))
 
     if (!placeIdValidated) {
       throw new CodedError("Invalid google place location", 400, "highscores|01")
