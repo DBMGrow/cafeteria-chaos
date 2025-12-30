@@ -30,19 +30,27 @@ locationsRouter.get("/googlesearch", {}, async (req, res) => {
   await req.getSession()
   const { search } = req.query || {}
 
-  const body = {
-    input: search,
-  }
+  const url = new URL("https://maps.googleapis.com/maps/api/place/autocomplete/json")
+  url.searchParams.append("input", String(search || ""))
+  url.searchParams.append("key", process.env.MAPS_API_KEY || "")
 
-  const resp = await fetch("https://places.googleapis.com/v1/places:autocomplete", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-Goog-Api-Key": process.env.MAPS_API_KEY || "" },
-    body: JSON.stringify(body),
+  const resp = await fetch(url.toString(), {
+    method: "GET",
   })
 
-  if (!resp.ok) throw new CodedError("Places Search failed", 502, "LOC|01")
+  if (!resp.ok) {
+    const errorText = await resp.text()
+    console.error("Places API Error:", resp.status, errorText)
+    throw new CodedError("Places Search failed", 502, "LOC|01")
+  }
 
   const json = await resp.json()
+
+  if (json.status !== "OK" && json.status !== "ZERO_RESULTS") {
+    console.error("Places API Response Error:", json)
+    throw new CodedError(`Places API Error: ${json.error_message}`, 502, "LOC|01")
+  }
+
   const results = (json.suggestions || []).map((s: any) => s.placePrediction).filter(Boolean)
 
   res.success(results, "Places Search successful")
