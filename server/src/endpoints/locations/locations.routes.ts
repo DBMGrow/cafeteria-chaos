@@ -51,8 +51,16 @@ locationsRouter.get("/googlesearch", {}, async (req, res) => {
     throw new CodedError(`Places API Error: ${json.error_message}`, 502, "LOC|01")
   }
 
-  const results = (json.suggestions || []).map((s: any) => s.placePrediction).filter(Boolean)
+  // Map the old API format (predictions) to match the new API format that your frontend expects
+  const results = (json.predictions || []).map((p: any) => ({
+    placeId: p.place_id,
+    structuredFormat: {
+      mainText: { text: p.structured_formatting.main_text },
+      secondaryText: { text: p.structured_formatting.secondary_text },
+    },
+  }))
 
+  // console.log("Places API results:", results)
   res.success(results, "Places Search successful")
 })
 
@@ -64,7 +72,7 @@ locationsRouter.get("/session", {}, async (req, res) => {
     throw new CodedError("No session found", 401, "LOC|02")
   }
 
-   const location = await locationsMethods.getLocationById(Number(session.location_id))
+  const location = await locationsMethods.getLocationById(Number(session.location_id))
 
   if (!location) throw new CodedError("Location not found", 404, "LOC|03")
 
